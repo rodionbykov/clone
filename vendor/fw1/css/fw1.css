@@ -1,0 +1,16 @@
+body {
+	margin: 0;
+}
+.wrap {
+	border: green 2px solid;
+	margin: 5px;
+	padding: 5px;
+	font-family: verdana, helvetica;
+}
+.page {
+	padding: 5px;
+}
+.footer {
+	text-align: center;
+	font-size: small;
+}
