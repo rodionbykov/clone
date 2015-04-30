@@ -33,7 +33,7 @@ CREATE TABLE `language_labels` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `IXU_language_labelkey` (`language`,`section`,`anchor`),
   KEY `IX_labelkey` (`section`,`anchor`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,6 +42,7 @@ CREATE TABLE `language_labels` (
 
 LOCK TABLES `language_labels` WRITE;
 /*!40000 ALTER TABLE `language_labels` DISABLE KEYS */;
+INSERT INTO `language_labels` VALUES (1,'en','meta:title','home.welcome','Welcome!'),(2,'fr','meta:title','home.welcome','Bienvenue!');
 /*!40000 ALTER TABLE `language_labels` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -78,6 +79,29 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'clone'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `getLanguageLabels` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getLanguageLabels`(arg_language CHAR(2))
+BEGIN
+
+	SELECT CONCAT(section, ":", anchor) AS labelkey, label
+	FROM language_labels
+	ORDER BY section, anchor;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -88,4 +112,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-04-28 19:10:47
+-- Dump completed on 2015-04-30 19:48:59
