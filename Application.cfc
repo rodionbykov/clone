@@ -1,6 +1,6 @@
 component extends="framework.one" {
 
-    THIS.name = "Clone";
+    THIS.name = "Clone12312";
     THIS.ormenabled = true;
     THIS.datasource = "clone";
 
@@ -9,7 +9,7 @@ component extends="framework.one" {
         usingSubsystems = false,
         defaultSection = 'home',
         defaultItem = 'welcome',
-        reloadApplicationOnEveryRequest = false,
+        reloadApplicationOnEveryRequest = true,
         generateSES = true,    
         SESOmitIndex = true,        
         // framework.ioc
@@ -17,11 +17,17 @@ component extends="framework.one" {
         diLocations = 'model,controllers'
     }
 
+    function setupApplication(){
+
+        var APPLICATION.languageService = getBeanFactory().getBean("LanguageService");
+        var languageServiceDecorator = getBeanFactory().getBean("LanguageServiceDecorator");
+        var langs = languageServiceDecorator.getLanguages();
+
+        fileWrite('resources/languages.json', langs, 'utf-8');
+    
+    }
+
     function setupRequest(){
-
-        var lm = getBeanFactory().getBean("LanguageService").init();
-
-        writeDump(lm.getLanguages());
 
     }
 
