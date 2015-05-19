@@ -73,6 +73,31 @@ INSERT INTO `languages` VALUES ('de','German','Deutsch'),('en','English','Englis
 UNLOCK TABLES;
 
 --
+-- Table structure for table `settings`
+--
+
+DROP TABLE IF EXISTS `settings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `settings` (
+  `name` varchar(255) NOT NULL,
+  `value` text,
+  `valuetype` enum('STRING','TEXT','NUMBER','BOOLEAN') NOT NULL DEFAULT 'STRING',
+  `controltype` enum('TEXT','DROPDOWN','RADIOBUTTON','CHECKBOX') NOT NULL DEFAULT 'TEXT',
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `settings`
+--
+
+LOCK TABLES `settings` WRITE;
+/*!40000 ALTER TABLE `settings` DISABLE KEYS */;
+/*!40000 ALTER TABLE `settings` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Dumping events for database 'clone'
 --
 
@@ -112,4 +137,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-04-30 19:48:59
+-- Dump completed on 2015-05-19 19:18:14

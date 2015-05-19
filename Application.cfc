@@ -6,14 +6,15 @@ component extends="framework.one" {
 
     variables.framework = {
         action = 'action',
-        usingSubsystems = false,
+        usingSubsystems = true,
+        defaultSubsystem = 'front',
         defaultSection = 'home',
         defaultItem = 'welcome',
         reloadApplicationOnEveryRequest = true,
-        generateSES = true,    
-        SESOmitIndex = true,        
+        generateSES = true,
+        SESOmitIndex = true,
         // framework.ioc
-        diEngine = 'di1',        
+        diEngine = 'di1',
         diLocations = 'model,controllers'
     }
 
@@ -24,7 +25,7 @@ component extends="framework.one" {
         var langs = languageServiceDecorator.getLanguages();
 
         fileWrite('resources/languages.json', langs, 'utf-8');
-    
+
     }
 
     function setupRequest(){
