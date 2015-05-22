@@ -18,7 +18,7 @@ component extends="framework.one" {
         diLocations = 'model,controllers'
     }
 
-    function setupApplication(){
+    void function setupApplication(){
 
         var APPLICATION.languageService = getBeanFactory().getBean("LanguageService");
         var languageServiceDecorator = getBeanFactory().getBean("LanguageServiceDecorator");
@@ -28,7 +28,12 @@ component extends="framework.one" {
 
     }
 
-    function setupRequest(){
+    void function onError(Exception, event){
+        setLayout(getSubSystem() & ':layouts.default');
+        super.onError(arguments.Exception, arguments.event);
+    }
+
+    void function setupRequest(){
 
     }
 

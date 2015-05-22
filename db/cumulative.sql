@@ -26,12 +26,12 @@ DROP TABLE IF EXISTS `language_labels`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `language_labels` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `language` char(2) NOT NULL,
+  `languagecode` char(2) NOT NULL,
   `section` varchar(255) NOT NULL,
   `anchor` varchar(255) NOT NULL,
   `label` text,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `IXU_language_labelkey` (`language`,`section`,`anchor`),
+  UNIQUE KEY `IXU_languagecode_labelkey` (`languagecode`,`section`,`anchor`),
   KEY `IX_labelkey` (`section`,`anchor`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -117,8 +117,9 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getLanguageLabels`(arg_language CHAR(2))
 BEGIN
 
-	SELECT CONCAT(section, ":", anchor) AS labelkey, label
+	SELECT CONCAT(section, ".", anchor) AS labelkey, label
 	FROM language_labels
+	WHERE languagecode = arg_language
 	ORDER BY section, anchor;
 
 END ;;
@@ -137,4 +138,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-05-19 19:18:14
+-- Dump completed on 2015-05-22 15:54:59
