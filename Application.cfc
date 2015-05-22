@@ -18,22 +18,22 @@ component extends="framework.one" {
         diLocations = 'model,controllers'
     }
 
-    void function setupApplication(){
+    public void function setupApplication(){
 
-        var APPLICATION.languageService = getBeanFactory().getBean("LanguageService");
-        var languageServiceDecorator = getBeanFactory().getBean("LanguageServiceDecorator");
-        var langs = languageServiceDecorator.getLanguages();
+        APPLICATION.languageService = getBeanFactory().getBean("LanguageService");
+        //var languageServiceDecorator = getBeanFactory().getBean("LanguageServiceDecorator");
+        //var langs = languageServiceDecorator.getLanguages();
 
-        fileWrite('resources/languages.json', langs, 'utf-8');
+        //fileWrite('resources/languages.json', langs, 'utf-8');
 
     }
 
-    void function onError(Exception, event){
+    public void function onError(Exception, event){
         setLayout(getSubSystem() & ':layouts.default');
         super.onError(arguments.Exception, arguments.event);
     }
 
-    void function setupRequest(){
+    public void function setupRequest(){
 
     }
 

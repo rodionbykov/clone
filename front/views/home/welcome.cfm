@@ -1,1 +1,1 @@
-Hello World!
+<cfoutput>#rc.welcome#</cfoutput>
