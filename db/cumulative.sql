@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `clone` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `clone`;
 -- MySQL dump 10.13  Distrib 5.6.17, for Win32 (x86)
 --
 -- Host: localhost    Database: clone
@@ -42,7 +40,7 @@ CREATE TABLE `language_labels` (
 
 LOCK TABLES `language_labels` WRITE;
 /*!40000 ALTER TABLE `language_labels` DISABLE KEYS */;
-INSERT INTO `language_labels` VALUES (1,'en','meta:title','home.welcome','Welcome!'),(2,'fr','meta:title','home.welcome','Bienvenue!');
+INSERT INTO `language_labels` VALUES (1,'en','home','welcome','Welcome!'),(2,'fr','home','welcome','Bienvenue!');
 /*!40000 ALTER TABLE `language_labels` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -114,13 +112,22 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getLanguageLabels`(arg_language CHAR(2))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getLanguageLabels`(arg_languagecode CHAR(2))
 BEGIN
 
-	SELECT CONCAT(section, ".", anchor) AS labelkey, label
+	SELECT section, anchor, CONCAT(section, ".", anchor) AS labelkey, label
 	FROM language_labels
-	WHERE languagecode = arg_language
+	WHERE languagecode = arg_languagecode
 	ORDER BY section, anchor;
+
+	SELECT DISTINCT section 
+	FROM language_labels
+	WHERE languagecode = arg_languagecode
+	ORDER BY section;
+
+    SELECT `code`, `name`, nativename
+    FROM languages
+	ORDER BY `code`;
 
 END ;;
 DELIMITER ;
@@ -138,4 +145,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-05-22 15:54:59
+-- Dump completed on 2015-05-22 19:39:04
