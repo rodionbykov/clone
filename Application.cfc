@@ -25,16 +25,16 @@ component extends="framework.one" {
         //var langs = languageServiceDecorator.getLanguages();
 
         //fileWrite('resources/languages.json', langs, 'utf-8');
-
     }
+
+    public void function setupRequest(){
+        REQUEST.language = APPLICATION.languageService.getLanguage("en");
+        StructAppend(URL, CreateObject("component", "UDF"));
+    }
+
 
     public void function onError(Exception, event){
         setLayout(getSubSystem() & ':layouts.default');
         super.onError(arguments.Exception, arguments.event);
     }
-
-    public void function setupRequest(){
-
-    }
-
 }

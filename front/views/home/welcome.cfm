@@ -1,1 +1,1 @@
-<cfoutput>#rc.welcome#</cfoutput>
+<cfoutput>#i18n('home.welcome')#</cfoutput>

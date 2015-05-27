@@ -8,9 +8,6 @@ component {
 
     public void function welcome (any rc) {
 
-        var l = APPLICATION.languageService.getLanguage('en');
-        rc.welcome = l.getlanguagelabels()['home']['welcome'];
-
     }
 
 }
