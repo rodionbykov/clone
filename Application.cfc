@@ -1,11 +1,11 @@
 component extends="framework.one" {
 
-    THIS.name = "Clone12312";
+    THIS.name = "Clone";
     THIS.ormenabled = true;
     THIS.datasource = "clone";
 
     variables.framework = {
-        action = 'action',
+        action = 'do',
         usingSubsystems = true,
         defaultSubsystem = 'front',
         defaultSection = 'home',
@@ -31,7 +31,6 @@ component extends="framework.one" {
         REQUEST.language = APPLICATION.languageService.getLanguage("en");
         StructAppend(URL, CreateObject("component", "UDF"));
     }
-
 
     public void function onError(Exception, event){
         setLayout(getSubSystem() & ':layouts.default');

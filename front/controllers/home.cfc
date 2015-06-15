@@ -7,7 +7,7 @@ component {
     }
 
     public void function welcome (any rc) {
-
+        rc.user = EntityLoadByPK("User", 2);
     }
 
 }
