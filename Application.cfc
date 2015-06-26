@@ -11,7 +11,7 @@ component extends="framework.one" {
         defaultSection = 'home',
         defaultItem = 'welcome',
         reloadApplicationOnEveryRequest = true,
-        generateSES = true,
+        generateSES = false,
         SESOmitIndex = true,
         // framework.ioc
         diEngine = 'di1',
@@ -21,6 +21,7 @@ component extends="framework.one" {
     public void function setupApplication(){
 
         APPLICATION.languageService = getBeanFactory().getBean("LanguageService");
+        APPLICATION.securityService = getBeanFactory().getBean("SecurityService");
         //var languageServiceDecorator = getBeanFactory().getBean("LanguageServiceDecorator");
         //var langs = languageServiceDecorator.getLanguages();
 
@@ -30,6 +31,7 @@ component extends="framework.one" {
     public void function setupRequest(){
         REQUEST.language = APPLICATION.languageService.getLanguage("en");
         StructAppend(URL, CreateObject("component", "UDF"));
+        APPLICATION.securityService.checkUser();
     }
 
     public void function onError(Exception, event){

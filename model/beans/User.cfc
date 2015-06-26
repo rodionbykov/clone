@@ -31,7 +31,6 @@ component persistent="true" entityname="User" table="users" accessors="true" {
     property name="sessiontoken" persistent="false";
     property name="token" persistent="false";
 
-
     public any function init(){
         VARIABLES.setID(0);
         VARIABLES.setLogin('');

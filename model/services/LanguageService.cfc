@@ -32,7 +32,7 @@
 
         <cfset var result = StructNew() />
 
-        <cfstoredproc procedure="getLanguageLabels">
+        <cfstoredproc procedure="get_language_labels">
             <cfprocparam cfsqltype="CF_SQL_CHAR" value="#ARGUMENTS.arg_languagecode#" />
             <cfprocresult name="LOCAL.languagelabels" resultset="1" />
             <cfprocresult name="LOCAL.sections" resultset="2" />

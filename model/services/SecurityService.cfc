@@ -9,51 +9,37 @@
 
   </cffunction>
 
+  <cffunction name="checkUser">
+    <cfif structKeyExists(SESSION, "user")>
+        <cfset SESSION.user = THIS.pass(SESSION.user.getSessionToken()) />
+    <cfelse>
+        <cfset SESSION.user = EntityNew("User") />
+    </cfif>
+  </cffunction>
+
   <cffunction name="login" output="false" hint="Login action" returntype="Struct">
     <cfargument name="arg_login" required="true" type="string" />
     <cfargument name="arg_password" required="true" type="string" />
 
     <cfset var qryUser = "" />
     <cfset var qryRoles = "" />
-    <cfset var qryTokens = "" />
-    <cfset var user = { id: 0, login: '', firstname: '', lastname: '', email: '', moment: '', lastactionmoment: '', sessiontoken: '', usersession_isactive: 0, roles: [], tokens: [] } />
-    <cfset var role = { id: 0,  pluralname: '', singularname: ''} />
-    <cfset var token = { id: 0,  token: ''} />
+    <cfset var user = EntityNew("User") />
 
     <cfstoredproc procedure="usp_login">
       <cfprocparam type="in" cfsqltype="CF_SQL_VARCHAR" value="#ARGUMENTS.arg_login#" />
       <cfprocparam type="in" cfsqltype="CF_SQL_VARCHAR" value="#Hash(ARGUMENTS.arg_password)#" />
       <cfprocresult name="qryUser" resultset="1" />
       <cfprocresult name="qryRoles" resultset="2" />
-      <cfprocresult name="qryTokens" resultset="3" />
     </cfstoredproc>
 
     <cfif qryUser.recordcount eq 1>
-      <cfset user.id = qryUser.id />
-      <cfset user.login = qryUser.login />
-      <cfset user.firstname = qryUser.firstname />
-      <cfset user.lastname = qryUser.lastname />
-      <cfset user.email = qryUser.email />
-      <cfset user.sessiontoken = qryUser.sessiontoken />
-      <cfset user.moment = qryUser.moment />
-      <cfset user.lastactionmoment = qryUser.lastactionmoment />
-      <cfset user.usersession_isactive = qryUser.usersession_isactive />
-
-      <cfloop query="qryRoles">
-        <cfset role = structNew() />
-        <cfset role.id = qryRoles.id />
-        <cfset role.pluralname = qryRoles.pluralname />
-        <cfset role.singularname = qryRoles.singularname />
-        <cfset arrayAppend(user.roles, role) />
-      </cfloop>
-
-      <cfloop query="qryTokens">
-        <cfset token = structNew() />
-        <cfset token.id = qryTokens.id />
-        <cfset token.token = qryTokens.token />
-        <cfset arrayAppend(user.tokens, token) />
-      </cfloop>
+       <cfset LOCAL.user = EntityLoadByPK("User", LOCAL.qryUser.id) />
+       <cfset LOCAL.user.setSessionToken(LOCAL.qryUser.sessiontoken) />
     </cfif>
+
+    <cflogin>
+        <cfloginuser name = "#LOCAL.user.getLogin()#" password = "" roles = "#LOCAL.user.getRolesList()#"/>
+    </cflogin>
 
     <cfreturn user />
   </cffunction>
@@ -202,43 +188,17 @@
 
     <cfset var qryUser = "" />
     <cfset var qryRoles = "" />
-    <cfset var qryTokens = "" />
-    <cfset var user = { id: 0, login: '', firstname: '', lastname: '', email: '', moment: '', lastactionmoment: '', sessiontoken: '', usersession_isactive: 0, roles: [], tokens: [] } />
-    <cfset var role = { id: 0,  pluralname: '', singularname: ''} />
-    <cfset var token = { id: 0,  token: ''} />
+    <cfset var user = EntityNew("User") />
 
     <cfstoredproc procedure="usp_pass">
       <cfprocparam type="in" cfsqltype="CF_SQL_VARCHAR" value="#ARGUMENTS.arg_sessiontoken#" />
       <cfprocresult name="qryUser" resultset="1" />
       <cfprocresult name="qryRoles" resultset="2" />
-      <cfprocresult name="qryTokens" resultset="3" />
     </cfstoredproc>
 
     <cfif qryUser.recordcount eq 1>
-      <cfset user.id = qryUser.id />
-      <cfset user.login = qryUser.login />
-      <cfset user.firstname = qryUser.firstname />
-      <cfset user.lastname = qryUser.lastname />
-      <cfset user.email = qryUser.email />
-      <cfset user.sessiontoken = qryUser.sessiontoken />
-      <cfset user.moment = qryUser.moment />
-      <cfset user.lastactionmoment = qryUser.lastactionmoment />
-      <cfset user.usersession_isactive = qryUser.usersession_isactive />
-
-      <cfloop query="qryRoles">
-        <cfset role = structNew() />
-        <cfset role.id = qryRoles.id />
-        <cfset role.pluralname = qryRoles.pluralname />
-        <cfset role.singularname = qryRoles.singularname />
-        <cfset arrayAppend(user.roles, role) />
-      </cfloop>
-
-      <cfloop query="qryTokens">
-        <cfset token = structNew() />
-        <cfset token.id = qryTokens.id />
-        <cfset token.token = qryTokens.token />
-        <cfset arrayAppend(user.tokens, token) />
-      </cfloop>
+      <cfset user = EntityLoadByPK("User", qryUser.id) />
+      <cfset user.setSessionToken(qryUser.sessiontoken) />
     </cfif>
 
     <cfreturn user />
@@ -265,26 +225,21 @@
   <cffunction name="logout" output="false" hint="Log out action" returntype="Struct">
     <cfargument name="arg_sessiontoken" required="true" type="string" />
 
-    <cfset var result = { id: 0, login: '', firstname: '', lastname: '', email: '', moment: '', lastactionmoment: '', sessiontoken: '', usersession_isactive: 0 } />
+    <cfset var user = EntityNew("User") />
 
     <cfstoredproc procedure="usp_logout">
       <cfprocparam type="in" cfsqltype="CF_SQL_VARCHAR" value="#ARGUMENTS.arg_sessiontoken#" />
-      <cfprocresult name="qrySession" resultset="1" />
+      <cfprocresult name="qryUser" resultset="1" />
     </cfstoredproc>
 
-    <cfif qrySession.RecordCount eq 1>
-      <cfset result.id = qrySession.id />
-      <cfset result.login = qrySession.login />
-      <cfset result.firstname = qrySession.firstname />
-      <cfset result.lastname = qrySession.lastname />
-      <cfset result.email = qrySession.email />
-      <cfset result.sessiontoken = qrySession.sessiontoken />
-      <cfset result.moment = qrySession.moment />
-      <cfset result.lastactionmoment = qrySession.lastactionmoment />
-      <cfset result.usersession_isactive = qrySession.usersession_isactive />
+    <cfif qryUser.recordcount eq 1>
+      <cfset LOCAL.user = EntityLoadByPK("User", qryUser.id) />
+      <cfset LOCAL.setSessionToken(qryUser.sessiontoken) />
     </cfif>
 
-    <cfreturn result />
+    <cflogout />
+
+    <cfreturn LOCAL.user />
   </cffunction>
 
 </cfcomponent>

@@ -57,7 +57,7 @@ CREATE TABLE `languages_labels` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `IXU_languagecode_labelkey` (`languagecode`,`section`,`anchor`),
   KEY `IX_labelkey` (`section`,`anchor`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,7 +66,7 @@ CREATE TABLE `languages_labels` (
 
 LOCK TABLES `languages_labels` WRITE;
 /*!40000 ALTER TABLE `languages_labels` DISABLE KEYS */;
-INSERT INTO `languages_labels` VALUES (1,'en','home','welcome','Welcome!'),(2,'fr','home','welcome','Bienvenue!');
+INSERT INTO `languages_labels` VALUES (1,'en','home','welcome','Use this code as a way to quickly start any new project.'),(2,'fr','home','welcome','Utilisez ce code comme un moyen de démarrer rapidement tout nouveau projet.'),(3,'en','home','title','Welcome!'),(4,'fr','home','title','Bienvenue!');
 /*!40000 ALTER TABLE `languages_labels` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -206,7 +206,7 @@ CREATE TABLE `users_sessions` (
   `isactive` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `IXU_token` (`token`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -215,6 +215,7 @@ CREATE TABLE `users_sessions` (
 
 LOCK TABLES `users_sessions` WRITE;
 /*!40000 ALTER TABLE `users_sessions` DISABLE KEYS */;
+INSERT INTO `users_sessions` VALUES (1,2,'cb65fd344e4d78b6dedb2a304038dc30d9365732','2015-06-26 21:05:14','2015-06-26 19:05:14',1),(2,2,'c0642cbca3875d64cda9be1adf1a1b7fbc7007be','2015-06-26 21:06:24','2015-06-26 19:06:24',1),(3,2,'4b3f496106377f5b8ab48fc7860857bf3d65bf36','2015-06-26 22:06:25','2015-06-26 20:06:25',1),(4,2,'6fce67d4196b14a1e1b71c0defc0eb3286a916f4','2015-06-26 22:06:57','2015-06-26 20:06:57',1),(5,2,'ccdbdef2186687dca4f64328e117a86c486bd552','2015-06-26 22:07:17','2015-06-26 20:07:17',1),(6,2,'578ccb701f772ca95ade3b40295e62cbd7b35742','2015-06-26 22:08:36','2015-06-26 20:08:36',1),(7,2,'f38170bb684cc056b8c15eaf55e54ef02eec7dc8','2015-06-26 22:08:36','2015-06-26 20:08:36',1),(8,2,'41752e32443842bc0fd44520f81aec715b8bae6d','2015-06-26 22:32:52','2015-06-26 20:32:52',1),(9,2,'50270687c80505881ed3e3e27dac240977c0bb75','2015-06-26 22:36:14','2015-06-26 20:36:14',1),(10,2,'b737c9ed71852c0917a54554944bbea67db5b391','2015-06-26 22:36:35','2015-06-26 20:36:35',1),(11,2,'86784ae22271cd2b4218187a95549877c86c241a','2015-06-26 22:36:36','2015-06-26 20:36:36',1),(12,2,'7aad6b441dacb63a54a6b1d9d201c37c485c5213','2015-06-26 22:36:37','2015-06-26 20:36:37',1),(13,2,'833c944058a56b60841c6eef939859efa9421207','2015-06-26 22:36:37','2015-06-26 20:36:37',1),(14,2,'7bda73dd3a4ff1cd12f68f707c63dde35733e8bf','2015-06-26 22:37:28','2015-06-26 20:37:28',1),(15,2,'b9943c1bc1669bbc5cb1f3576db546d15e6fcf0e','2015-06-26 22:39:10','2015-06-26 20:39:10',1),(16,2,'fbd5a2f7ce77e3be0c1630779f03591227d3df11','2015-06-26 22:39:48','2015-06-26 20:39:48',1),(17,2,'5091650d0df29cdcf3a428b89c293a404ab6c54e','2015-06-26 23:12:18','2015-06-26 21:12:44',1),(18,2,'e59975433bdd2446b7e3e01b469c80530d3092cb','2015-06-26 23:12:44','2015-06-26 21:12:52',1),(19,2,'09142ce0ceb06ddb56e4871ebf3b9ecc3f858671','2015-06-26 23:12:52','2015-06-26 21:35:28',1),(20,2,'3c444ac159ab167f5d85b7a4ee4946174aa4a79a','2015-06-26 23:35:28','2015-06-26 21:35:28',1),(21,2,'0364d4add8683fb486a213125164c9ecb3ab14b3','2015-06-26 23:44:29','2015-06-26 21:46:37',0);
 /*!40000 ALTER TABLE `users_sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -225,7 +226,7 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'clone'
 --
-/*!50003 DROP PROCEDURE IF EXISTS `getLanguageLabels` */;
+/*!50003 DROP PROCEDURE IF EXISTS `get_language_labels` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -235,7 +236,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getLanguageLabels`(arg_languagecode CHAR(2))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_language_labels`(arg_languagecode CHAR(2))
 BEGIN
 
 	SELECT `section`, `anchor`, CONCAT(`section`, ".", `anchor`) AS labelkey, `label`
@@ -258,6 +259,165 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `usp_login` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `usp_login`(arg_login varchar(45), arg_passwd varchar(128))
+BEGIN
+
+DECLARE var_user_id INT;
+DECLARE var_sessiontoken VARCHAR(128);
+
+SET var_user_id = 0;
+SET var_sessiontoken = SHA1(RAND());
+
+IF EXISTS(
+            SELECT id
+            FROM users
+            WHERE login = arg_login
+            AND passwd = arg_passwd
+            AND isactive = 1
+          ) THEN
+
+  SELECT id
+  INTO var_user_id
+  FROM users
+  WHERE login = arg_login
+  AND passwd = arg_passwd
+  AND isactive = 1;
+
+  INSERT INTO users_sessions (id_user, token, moment)
+  VALUES (var_user_id, var_sessiontoken, NOW());
+
+END IF;
+
+CALL usp_pass (var_sessiontoken);
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `usp_logout` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `usp_logout`(arg_sessiontoken varchar(128))
+BEGIN
+
+DECLARE var_user_id INT;
+SET var_user_id = 0;
+
+IF EXISTS (
+            SELECT id_user
+            FROM users_sessions
+            WHERE token = arg_sessiontoken
+				AND isactive = 1
+          )
+
+THEN
+
+  SELECT id_user
+  INTO var_user_id
+  FROM users_sessions
+  WHERE token = arg_sessiontoken
+	AND isactive = 1;
+
+  UPDATE users_sessions
+  SET isactive = 0, lastactionmoment = NOW()
+  WHERE token = arg_sessiontoken
+	AND isactive = 1;
+
+END IF;
+
+SELECT u.id, u.login, u.firstname, u.lastname, u.email, x.token as sessiontoken, x.moment, x.lastactionmoment, x.isactive AS usersession_isactive
+FROM users u
+  JOIN users_sessions x
+WHERE u.id = var_user_id
+  AND x.token = arg_sessiontoken
+ORDER BY x.moment DESC
+LIMIT 1;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `usp_pass` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `usp_pass`(arg_sessiontoken varchar(128))
+BEGIN
+
+DECLARE var_user_id INT;
+
+SET var_user_id = 0;
+
+IF EXISTS (
+            SELECT id_user
+            FROM users_sessions
+            WHERE token = arg_sessiontoken
+              AND isactive = 1
+          )
+THEN
+
+UPDATE users_sessions 
+SET lastactionmoment = NOW()
+WHERE token = arg_sessiontoken
+AND isactive = 1;
+
+SELECT id_user
+INTO var_user_id
+FROM users_sessions
+WHERE token = arg_sessiontoken
+AND isactive = 1;
+
+END IF;
+
+SELECT u.id, u.login, u.firstname, u.lastname, u.email, x.token as sessiontoken, x.moment, x.lastactionmoment, x.isactive AS usersession_isactive
+FROM users u
+  JOIN users_sessions x
+    ON x.id_user = u.id
+WHERE u.id = var_user_id
+  AND u.isactive = 1
+  AND x.isactive = 1
+  AND x.token = arg_sessiontoken;
+
+SELECT id, pluralname, singularname
+FROM roles r
+	JOIN users_roles ur
+		ON ur.id_role = r.id
+WHERE ur.id_user = var_user_id;
+
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -268,4 +428,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-06-15 22:43:05
+-- Dump completed on 2015-06-26 23:48:11
