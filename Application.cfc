@@ -38,4 +38,5 @@ component extends="framework.one" {
         setLayout(getSubSystem() & ':layouts.default');
         super.onError(arguments.Exception, arguments.event);
     }
+
 }

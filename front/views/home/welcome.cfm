@@ -1,5 +1,4 @@
 <cfoutput>
-<div class="container">
 
     <div class="starter-template">
         <h1>#i18n('home.title')#</h1>
@@ -8,7 +7,6 @@
         </p>
     </div>
 
-</div>
 </cfoutput>
 
 <!---

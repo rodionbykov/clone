@@ -35,11 +35,10 @@
     <cfif qryUser.recordcount eq 1>
        <cfset LOCAL.user = EntityLoadByPK("User", LOCAL.qryUser.id) />
        <cfset LOCAL.user.setSessionToken(LOCAL.qryUser.sessiontoken) />
+       <cflogin>
+         <cfloginuser name = "#LOCAL.user.getLogin()#" password = "" roles = "#LOCAL.user.getRolesList()#"/>
+       </cflogin>
     </cfif>
-
-    <cflogin>
-        <cfloginuser name = "#LOCAL.user.getLogin()#" password = "" roles = "#LOCAL.user.getRolesList()#"/>
-    </cflogin>
 
     <cfreturn user />
   </cffunction>
@@ -234,10 +233,10 @@
 
     <cfif qryUser.recordcount eq 1>
       <cfset LOCAL.user = EntityLoadByPK("User", qryUser.id) />
-      <cfset LOCAL.setSessionToken(qryUser.sessiontoken) />
-    </cfif>
+      <cfset LOCAL.user.setSessionToken(qryUser.sessiontoken) />
 
-    <cflogout />
+      <cflogout />
+    </cfif>
 
     <cfreturn LOCAL.user />
   </cffunction>

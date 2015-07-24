@@ -14,7 +14,19 @@ component persistent="true" entityname="Language" table="languages" accessors="t
         VARIABLES.name = ARGUMENTS.name;
         VARIABLES.nativename = ARGUMENTS.nativename;
 
+        VARIABLES.languagelabels = StructNew();
+
         return THIS;
+    }
+
+    public void function setLanguageLabel(section, anchor, label) {
+        if ( NOT StructKeyExists(VARIABLES.languagelabels, ARGUMENTS.section) ){
+            VARIABLES.languagelabels[ARGUMENTS.section] = StructNew();
+        }
+        if ( NOT StructKeyExists(VARIABLES.languagelabels[ARGUMENTS.section], ARGUMENTS.anchor) ){
+            VARIABLES.languagelabels[ARGUMENTS.section][ARGUMENTS.anchor] = StructNew();
+        }
+        VARIABLES.languagelabels[ARGUMENTS.section][ARGUMENTS.anchor] = ARGUMENTS.label;
     }
 
 }

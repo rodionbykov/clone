@@ -6,14 +6,26 @@ component accessors="true" output="false" {
         VARIABLES.fw = ARGUMENTS.fw;
     }
 
+    public void function before(any rc) {
+        param name="rc.messages" default=ArrayNew(1);
+        param name="rc.errors" default=ArrayNew(1);
+        param name="rc.infos" default=ArrayNew(1);
+        param name="rc.warnings" default=ArrayNew(1);
+    }
+
     public void function login (any rc) {
         SESSION.user = VARIABLES.securityService.login(rc.username, rc.passwd);
-        VARIABLES.fw.redirect("home.welcome");
+        if(SESSION.user.getID() GT 0) {
+            ArrayAppend(rc.messages, i18n("login.welcome", "Welcome back!"));
+        }else{
+            ArrayAppend(rc.errors, i18n("login.incorrect", "Login incorrect, please try again"));
+        }
+        VARIABLES.fw.redirect("home.login", "all");
     }
 
     public void function logout (any rc) {
         SESSION.user = VARIABLES.securityService.logout(SESSION.user.getSessionToken());
-        VARIABLES.fw.redirect("home.welcome");
+        VARIABLES.fw.redirect("home.welcome", "all");
     }
 
 }

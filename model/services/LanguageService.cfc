@@ -55,4 +55,26 @@
         <cfreturn LOCAL.result />
     </cffunction>
 
+    <cffunction name="setLanguageLabel" access="public" returntype="void" output="false">
+        <cfargument name="arg_language" type="any" required="true" />
+        <cfargument name="arg_labelkey" type="string" required="true" />
+        <cfargument name="arg_label" type="string" required="true" />
+
+        <cfset var section = ListFirst(ARGUMENTS.arg_labelkey, ".") />
+        <cfset var anchor = ListLast(ARGUMENTS.arg_labelkey, ".") />
+
+        <cfstoredproc procedure="set_language_label">
+            <cfprocparam cfsqltype="CF_SQL_CHAR" value="#ARGUMENTS.arg_language.getCode()#" />
+            <cfprocparam cfsqltype="CF_SQL_VARCHAR" value="#LOCAL.section#" />
+            <cfprocparam cfsqltype="CF_SQL_VARCHAR" value="#LOCAL.anchor#" />
+            <cfprocparam cfsqltype="CF_SQL_LONGVARCHAR" value="#ARGUMENTS.arg_label#" />
+            <cfprocresult name="LOCAL.languagelabel" />
+        </cfstoredproc>
+
+        <cfif LOCAL.languagelabel.RecordCount EQ 1>
+            <cfset arg_language.setLanguageLabel(LOCAL.section, LOCAL.anchor, ARGUMENTS.arg_label) />
+        </cfif>
+
+    </cffunction>
+
 </cfcomponent>

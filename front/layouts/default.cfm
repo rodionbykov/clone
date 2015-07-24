@@ -49,7 +49,69 @@
 </nav>
 </cfoutput>
 
-<cfoutput>#body#</cfoutput>
+<div class="container">
+
+    <cfparam name="rc.messages" default="#ArrayNew(1)#" />
+    <cfparam name="rc.infos" default="#ArrayNew(1)#" />
+    <cfparam name="rc.warnings" default="#ArrayNew(1)#" />
+    <cfparam name="rc.errors" default="#ArrayNew(1)#" />
+
+    <cfoutput>
+
+    <cfif ArrayLen(rc.messages) GT 0>
+        <cfloop array="#rc.messages#" index="message">
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                    ?</button>
+                <span class="glyphicon glyphicon-ok"></span> <strong>Success Message</strong>
+                <hr class="message-inner-separator">
+                <p>#message#</p>
+            </div>
+        </cfloop>
+    </cfif>
+
+    <cfif ArrayLen(rc.infos) GT 0>
+        <cfloop array="#rc.infos#" index="info">
+            <div class="alert alert-info">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                    ?</button>
+                <span class="glyphicon glyphicon-info-sign"></span> <strong>Info Message</strong>
+                <hr class="message-inner-separator">
+                <p>#info#</p>
+            </div>
+        </cfloop>
+    </cfif>
+
+    <cfif ArrayLen(rc.warnings) GT 0>
+        <cfloop array="#rc.warnings#" index="warning">
+            <div class="alert alert-warning">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                    ?</button>
+                <span class="glyphicon glyphicon-record"></span> <strong>Warning Message</strong>
+                <hr class="message-inner-separator">
+                <p>#warning#</p>
+            </div>
+        </cfloop>
+    </cfif>
+
+
+    <cfif ArrayLen(rc.errors) GT 0>
+        <cfloop array="#rc.errors#" index="error">
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                    ?</button>
+                <span class="glyphicon glyphicon-hand-right"></span> <strong>Danger Message</strong>
+                <hr class="message-inner-separator">
+                <p>#error#</p>
+            </div>
+        </cfloop>
+    </cfif>
+
+    </cfoutput>
+
+    <cfoutput>#body#</cfoutput>
+
+</div>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="vendor/jquery/dist/jquery.min.js"></script>
