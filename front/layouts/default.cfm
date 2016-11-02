@@ -1,3 +1,4 @@
+<cffunction name="i18n"><cfreturn "test" /></cffunction>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,8 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Bootstrap 101 Template</title>
-
+    <cfoutput>
+    <title>#i18n('meta.title')#</title>
+    </cfoutput>
     <!-- Bootstrap -->
     <link href="vendor/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -32,16 +34,16 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="index.cfm">Clone</a>
+            <a class="navbar-brand" href="index.cfm">#i18n('menu.title')#</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="about">About</a></li>
+                <li><a href="#buildURL("home.about")#">#i18n('menu.about')#</a></li>
                 <cfif NOT IsUserInRole("user")>
-                    <li class="active"><a href="index.cfm?do=home.login">Login</a></li>
+                    <li class="active"><a href="index.cfm?do=home.login">#i18n('menu.login')#</a></li>
                 <cfelse>
                         <li><p class="navbar-text"><strong>#SESSION.user.getFirstName()# #SESSION.user.getLastName()#</strong></p></li>
-                        <li class="active"><a href="index.cfm?do=user.logout">Logout</a></li>
+                        <li class="active"><a href="index.cfm?do=user.logout">#i18n('menu.logout')#</a></li>
                 </cfif>
             </ul>
         </div><!--/.nav-collapse -->
@@ -49,14 +51,13 @@
 </nav>
 </cfoutput>
 
+<cfparam name="rc.messages" default="#ArrayNew(1)#" />
+<cfparam name="rc.infos" default="#ArrayNew(1)#" />
+<cfparam name="rc.warnings" default="#ArrayNew(1)#" />
+<cfparam name="rc.errors" default="#ArrayNew(1)#" />
+
+<cfoutput>
 <div class="container">
-
-    <cfparam name="rc.messages" default="#ArrayNew(1)#" />
-    <cfparam name="rc.infos" default="#ArrayNew(1)#" />
-    <cfparam name="rc.warnings" default="#ArrayNew(1)#" />
-    <cfparam name="rc.errors" default="#ArrayNew(1)#" />
-
-    <cfoutput>
 
     <cfif ArrayLen(rc.messages) GT 0>
         <cfloop array="#rc.messages#" index="message">
@@ -107,11 +108,20 @@
         </cfloop>
     </cfif>
 
-    </cfoutput>
-
     <cfoutput>#body#</cfoutput>
 
+    <footer> <!--- TODO add language selector --->
+        <p>&copy; #Year(Now())# Company, Inc.
+            <!---
+        <cfloop array="#rc.languageService.getLanguages()#" index="i">
+             · <a href="#buildURL(rc.do)#">#i.getNative()#</a>
+        </cfloop>
+        --->
+        </p>
+    </footer>
+
 </div>
+</cfoutput>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="vendor/jquery/dist/jquery.min.js"></script>

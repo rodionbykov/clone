@@ -1,32 +1,47 @@
-component persistent="true" entityname="Language" table="languages" accessors="true" {
+component persistent="false" accessors="true" {
 
-    // persistent properties
-    property name="code" column="code" fieldType="id";
-    property name="name" column="name";
-    property name="nativename" column="nativename";
+    property name="code";
+    property name="name";
+    property name="native";
+    property name="labels";
+    property name="isdirty";
 
-    // non-persistent properties
-    property name="languagelabels" type="struct" persistent="false";
-
-    public any function init(code, name = "", nativename = "") {
+    public any function init(String code, String name, String native) {
 
         VARIABLES.code = ARGUMENTS.code;
         VARIABLES.name = ARGUMENTS.name;
-        VARIABLES.nativename = ARGUMENTS.nativename;
+        VARIABLES.native = ARGUMENTS.native;
+        VARIABLES.isDirty = true;
 
-        VARIABLES.languagelabels = StructNew();
+        VARIABLES.labels = {};
 
         return THIS;
     }
 
-    public void function setLanguageLabel(section, anchor, label) {
-        if ( NOT StructKeyExists(VARIABLES.languagelabels, ARGUMENTS.section) ){
-            VARIABLES.languagelabels[ARGUMENTS.section] = StructNew();
+    public void function setLabel(String arg_section, String arg_anchor, String arg_label) {
+        if ( NOT StructKeyExists(VARIABLES.labels, arg_section) ){
+            VARIABLES.labels[arg_section] = {};
         }
-        if ( NOT StructKeyExists(VARIABLES.languagelabels[ARGUMENTS.section], ARGUMENTS.anchor) ){
-            VARIABLES.languagelabels[ARGUMENTS.section][ARGUMENTS.anchor] = StructNew();
+        if ( NOT StructKeyExists(VARIABLES.labels[arg_section], arg_anchor) ){
+            VARIABLES.labels[arg_section][arg_anchor] = "";
         }
-        VARIABLES.languagelabels[ARGUMENTS.section][ARGUMENTS.anchor] = ARGUMENTS.label;
+        VARIABLES.labels[arg_section][arg_anchor] = arg_label;
+    }
+
+    public Boolean function isDirty(){
+       return VARIABLES.isDirty;
+    }
+
+    public Struct function toStruct(){
+       var result = {};
+
+       result[VARIABLES.code] = {
+          'name' = VARIABLES.name,
+          'native' = VARIABLES.native,
+          'labels' = VARIABLES.labels
+       };
+
+       return result;
     }
 
 }

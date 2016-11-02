@@ -1,42 +1,91 @@
-component extends="framework.one" {
+component extends="vendor.fw1.framework.one" {
 
-    THIS.name = "Clone";
+    THIS.name = "clone" & hash( getCurrentTemplatePath() );
+    THIS.applicationTimeout = createTimeSpan( 0, 0, 5, 0 );
+
+    THIS.datasource = getParams("datasource");
+
     THIS.ormenabled = true;
-    THIS.datasource = "clone";
+    THIS.ormSettings.datasource = getParams("ormdatasource");
 
-    variables.framework = {
+    THIS.mappings[ "/framework" ] = "#getDirectoryFromPath(getCurrentTemplatePath())#vendor/fw1/framework/";
+
+    VARIABLES.framework = {
         action = 'do',
         usingSubsystems = true,
         defaultSubsystem = 'front',
         defaultSection = 'home',
         defaultItem = 'welcome',
         reloadApplicationOnEveryRequest = true,
-        generateSES = false,
+        generateSES = true,
         SESOmitIndex = true,
-        // framework.ioc
-        diEngine = 'di1',
-        diLocations = 'model,controllers'
+        diLocations = 'model,controllers',
+        initMethod = 'configure'
+    };
+
+    //public void function onApplicationStart(){
+    //}
+
+    public Any function getParams(String argParam = ""){
+        var result = {};
+        try{
+          var jsonParams = FileRead("config/application.json", "utf-8");
+          result = DeserializeJSON(jsonParams);
+        }catch (any e){
+
+        }
+
+        result.rootDir = getDirectoryFromPath( getCurrentTemplatePath() );
+
+        if(argParam NEQ ""){
+            return StructFind(result, argParam);
+        }else{
+            return result;
+        }
     }
 
     public void function setupApplication(){
 
-        APPLICATION.languageService = getBeanFactory().getBean("LanguageService");
-        APPLICATION.securityService = getBeanFactory().getBean("SecurityService");
-        //var languageServiceDecorator = getBeanFactory().getBean("LanguageServiceDecorator");
-        //var langs = languageServiceDecorator.getLanguages();
+        // loading application parameters which will be used by other services, for example LanguageService
+        var configService = getBeanFactory().getBean( "ConfigService", { params = getParams() } );
+        configService.configure();
 
-        //fileWrite('resources/languages.json', langs, 'utf-8');
+        // loading available languages and labels for display
+        var languageService = getBeanFactory().getBean("LanguageService");
+        languageService.configure();
+
+        //APPLICATION.securityService = getBeanFactory().getBean("SecurityService");
+
+        REQUEST.momentStart = GetTickCount();
+        WriteOutput("App set up <br />");
     }
 
     public void function setupRequest(){
-        REQUEST.language = APPLICATION.languageService.getLanguage("en");
-        StructAppend(URL, CreateObject("component", "UDF"));
-        APPLICATION.securityService.checkUser();
+
+        // get application language which may be overridden by user settings
+        var languageService = getBeanFactory().getBean("LanguageService");
+        REQUEST.language = languageService.getCurrentLanguage();
+
+        var helperBean = getBeanFactory().getBean("Helper");
+        StructAppend(URL, helperBean);
+
+        param name="REQUEST.momentStart" default="#GetTickCount()#"; WriteOutput("Req set up <br />");
+
+        //APPLICATION.securityService.checkUser();
     }
 
-    public void function onError(Exception, event){
+    public void function onRequestEnd(){
+       var duration = GetTickCount() - REQUEST.momentStart;
+       writedump(duration & " ms");
+
+       var languageService = getBeanFactory().getBean("LanguageService");
+       languageService.update();
+    }
+
+    public void function onError(exception, eventName){
+        //writeDump(exception);writeDump(eventName);
         setLayout(getSubSystem() & ':layouts.default');
-        super.onError(arguments.Exception, arguments.event);
+        super.onError(arguments.Exception, arguments.eventName);
     }
 
 }

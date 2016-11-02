@@ -1,1 +1,1 @@
-[{"code":"de","name":"German","nativename":"Deutsch"},{"code":"en","name":"English","nativename":"English"},{"code":"fr","name":"French","nativename":"Français"},{"code":"ru","name":"Russian","nativename":"Русский"}]
+{"ru":{"native":"Русский","name":"Russian"},"en":{"native":"English","name":"English"}}

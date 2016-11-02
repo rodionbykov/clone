@@ -1,0 +1,9 @@
+{
+    "datasource":"clone",
+    "ormdatasource":"clone",    
+    "configDir": "config",
+    "resourcesDir": "resources",
+    "languagesJSON": "languages.json",
+    "labelsJSON": "labels.json",
+    "settingsJSON": "settings.json"
+}

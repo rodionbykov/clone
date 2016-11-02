@@ -4,16 +4,13 @@ component persistent="true" entityname="User" table="users" accessors="true" {
     property name="login";
     property name="firstname";
     property name="lastname";
-    property name="email";
-    property name="phone";
-    property name="address";
-    property name="city";
-    property name="province";
-    property name="postalcode";
-    property name="country";
-    property name="link";
-    property name="locale";
-    property name="isactive";
+
+    property name="settings"
+             singularName="setting"
+             fieldtype="one-to-many"
+             cfc="Setting"
+             fkcolumn="id_user"
+             type="array";
 
     property name="roles"
              singularname="role"
@@ -29,23 +26,12 @@ component persistent="true" entityname="User" table="users" accessors="true" {
     property name="moment" persistent="false";
     property name="lastactionmoment" persistent="false";
     property name="sessiontoken" persistent="false";
-    property name="token" persistent="false";
 
     public any function init(){
         VARIABLES.setID(0);
         VARIABLES.setLogin('');
         VARIABLES.setFirstName('');
         VARIABLES.setLastName('');
-        VARIABLES.setEmail('');
-        VARIABLES.setPhone('');
-        VARIABLES.setAddress('');
-        VARIABLES.setCity('');
-        VARIABLES.setProvince('');
-        VARIABLES.setPostalCode('');
-        VARIABLES.setCountry('');
-        VARIABLES.setLink('');
-        VARIABLES.setLocale('');
-        VARIABLES.setIsActive(1);
 
         VARIABLES.setRoles = ArrayNew(1);
 

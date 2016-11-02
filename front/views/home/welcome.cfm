@@ -1,12 +1,10 @@
 <cfoutput>
-
     <div class="starter-template">
         <h1>#i18n('home.title')#</h1>
         <p class="lead">
             #i18n('home.welcome')#
         </p>
     </div>
-
 </cfoutput>
 
 <!---

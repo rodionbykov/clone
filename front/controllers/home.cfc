@@ -1,6 +1,7 @@
 component accessors="true" output="false" {
 
-    property name="SecurityService";
+    property name="securityService";
+    property name="languageService";
 
     public void function init (any fw) {
         VARIABLES.fw = ARGUMENTS.fw;
