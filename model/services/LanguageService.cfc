@@ -46,12 +46,16 @@
 
     <cffunction name="update" access="public" returntype="void" output="false">
         <cfset var result = {} />
+        <cfset var isdirty = false />
 
-        <cfloop array="#VARIABLES.languages#" index="i">
-            <cfset StructAppend( LOCAL.result, i.toStruct(), true ) />
+        <cfloop array="#VARIABLES.languages#" index="l">
+            <cfif l.isDirty() EQ true><cfset isdirty = true /></cfif>
+            <cfset StructAppend( LOCAL.result, l.toStruct(), true ) />
         </cfloop>
 
-        <cfset VARIABLES.configService.exportLanguages(LOCAL.result) />
+        <cfif LOCAL.isdirty EQ true>
+            <cfset VARIABLES.configService.exportLanguages( LOCAL.result ) />
+        </cfif>
     </cffunction>
 
     <cffunction name="findOne" access="public" returntype="any" output="false"

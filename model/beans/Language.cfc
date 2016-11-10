@@ -11,7 +11,7 @@ component persistent="false" accessors="true" {
         VARIABLES.code = ARGUMENTS.code;
         VARIABLES.name = ARGUMENTS.name;
         VARIABLES.native = ARGUMENTS.native;
-        VARIABLES.isDirty = true;
+        VARIABLES.isDirty = false;
 
         VARIABLES.labels = {};
 
@@ -22,9 +22,15 @@ component persistent="false" accessors="true" {
         if ( NOT StructKeyExists(VARIABLES.labels, arg_section) ){
             VARIABLES.labels[arg_section] = {};
         }
+
         if ( NOT StructKeyExists(VARIABLES.labels[arg_section], arg_anchor) ){
             VARIABLES.labels[arg_section][arg_anchor] = "";
         }
+
+        if(VARIABLES.labels[arg_section][arg_anchor] NEQ arg_label){
+            VARIABLES.isDirty = true;
+        }
+
         VARIABLES.labels[arg_section][arg_anchor] = arg_label;
     }
 

@@ -57,7 +57,7 @@ component extends="vendor.fw1.framework.one" {
         //APPLICATION.securityService = getBeanFactory().getBean("SecurityService");
 
         REQUEST.momentStart = GetTickCount();
-        WriteOutput("App set up <br />");
+        WriteOutput("App set up ");
     }
 
     public void function setupRequest(){
@@ -69,7 +69,8 @@ component extends="vendor.fw1.framework.one" {
         var helperBean = getBeanFactory().getBean("Helper");
         StructAppend(URL, helperBean);
 
-        param name="REQUEST.momentStart" default="#GetTickCount()#"; WriteOutput("Req set up <br />");
+        param name="REQUEST.momentStart" default="#GetTickCount()#";
+        WriteOutput("Req set up");
 
         //APPLICATION.securityService.checkUser();
     }
@@ -78,6 +79,7 @@ component extends="vendor.fw1.framework.one" {
        var duration = GetTickCount() - REQUEST.momentStart;
        writedump(duration & " ms");
 
+       // TODO do it only in dev mode, not live mode
        var languageService = getBeanFactory().getBean("LanguageService");
        languageService.update();
     }

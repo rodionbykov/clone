@@ -8,20 +8,24 @@
         <cfset result = "" />
 
         <cfset var labels = REQUEST.language.getLabels() />
-        <cfset var section = ListFirst(ARGUMENTS.arg_labelkey, ".") />
-        <cfset var anchor = ListLast(ARGUMENTS.arg_labelkey, ".") />
+        <cfset var section = ListFirst(arg_labelkey, ".") />
+        <cfset var anchor = ListLast(arg_labelkey, ".") />
 
         <cfif StructKeyExists(labels, section) AND StructKeyExists(labels[section], anchor)>
             <cfset result = labels[section][anchor] />
         <cfelse>
-            <!--- not so fast
-            <cfif Len(ARGUMENTS.arg_defaultlabel) GT 0>
-                <cfset REQUEST.language.setLabel(REQUEST.language, ARGUMENTS.arg_labelkey, ARGUMENTS.arg_defaultlabel) />
-                <cfset result = ARGUMENTS.arg_defaultlabel />
+            <cfif Len(arg_defaultlabel) GT 0>
+                <cfset REQUEST.language.setLabel(section, anchor, arg_defaultlabel) />
+                <cfset result = arg_defaultlabel />
             <cfelse>
-                <cfset result = "MISSING:" & ARGUMENTS.arg_labelkey />
+                <cfset result = "MISSING:" & arg_labelkey />
             </cfif>
-            --->
+        </cfif>
+
+        <cfif NOT StructIsEmpty(arg_replacements)>
+            <cfloop collection="#arg_replacements#" index="i">
+                <cfset result = REReplaceNoCase(result, "\$#i#\$", StructFind(arg_replacements, i), "ALL" ) />
+            </cfloop>
         </cfif>
 
         <cfreturn result />
