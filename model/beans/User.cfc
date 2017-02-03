@@ -2,8 +2,14 @@ component persistent="true" entityname="User" table="users" accessors="true" {
 
     property name="id";
     property name="login";
-    property name="firstname";
-    property name="lastname";
+
+    property name="sessions"
+             singularName="session"
+             fieldtype="one-to-many"
+             cfc="Session"
+             fkcolumn="id_user"
+             type="array"
+             where="isactive = 1";
 
     property name="settings"
              singularName="setting"
@@ -21,23 +27,13 @@ component persistent="true" entityname="User" table="users" accessors="true" {
              inversejoincolumn="id_role"
              type="array";
 
-    // non-persistent properties
-
-    property name="moment" persistent="false";
-    property name="lastactionmoment" persistent="false";
-    property name="sessiontoken" persistent="false";
-
     public any function init(){
         VARIABLES.setID(0);
         VARIABLES.setLogin('');
-        VARIABLES.setFirstName('');
-        VARIABLES.setLastName('');
 
-        VARIABLES.setRoles = ArrayNew(1);
-
-        VARIABLES.setMoment(Now());
-        VARIABLES.setLastActionMoment(Now());
-        VARIABLES.setSessionToken('');
+        VARIABLES.setSessions(ArrayNew(1));
+        VARIABLES.setRoles(ArrayNew(1));
+        VARIABLES.setSettings(ArrayNew(1));
 
         return THIS;
     }
@@ -47,6 +43,28 @@ component persistent="true" entityname="User" table="users" accessors="true" {
 
         loop array="#VARIABLES.getRoles()#" index="r" {
             LOCAL.result = ListAppend(LOCAL.result, r.getSingularName());
+        }
+
+        return LOCAL.result;
+    }
+
+    public string function getTokensList() {
+        var result = "";
+
+        loop array="#VARIABLES.getRoles()#" index="r" {
+            LOCAL.result = ListAppend(LOCAL.result, r.getTokens());
+        }
+
+        return ListRemoveDuplicates(LOCAL.result);
+    }
+
+    public boolean function inRole(string arg_rolename){
+        var result = false;
+
+        loop array="#VARIABLES.getRoles()#" index="r" {
+            if(r.getSingularName() EQ arg_rolename OR r.getPluralName() EQ arg_rolename){
+               LOCAL.result = true;
+            }
         }
 
         return LOCAL.result;

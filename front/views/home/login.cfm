@@ -62,5 +62,7 @@
             </div>
         </div>
     </div>
-
+    <cfif IsDefined("SESSION.user")>
+    <cfdump var="#SESSION.user#" />
+    </cfif>
 </cfoutput>

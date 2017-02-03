@@ -14,13 +14,18 @@ component accessors="true" output="false" {
     }
 
     public void function login (any rc) {
-        SESSION.user = VARIABLES.securityService.login(rc.username, rc.passwd);
-        if(SESSION.user.getID() GT 0) {
+        var user = VARIABLES.securityService.login(rc.username, rc.passwd);
+
+        if(LOCAL.user.getID() GT 0) {
             ArrayAppend(rc.messages, i18n("login.welcome", "Welcome back!"));
+            SESSION.user = LOCAL.user;
         }else{
             ArrayAppend(rc.errors, i18n("login.incorrect", "Login incorrect, please try again"));
         }
+
         VARIABLES.fw.redirect("home.login", "all");
+
+        // TODO cflogin here !
     }
 
     public void function logout (any rc) {

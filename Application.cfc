@@ -1,14 +1,16 @@
-component extends="vendor.fw1.framework.one" {
+component extends='vendor.fw1.framework.one' {
 
-    THIS.name = "clone" & hash( getCurrentTemplatePath() );
+    THIS.name = 'clone' & hash( getCurrentTemplatePath() );
     THIS.applicationTimeout = createTimeSpan( 0, 0, 5, 0 );
 
-    THIS.datasource = getParams("datasource");
+    THIS.datasource = getParams('datasource');
 
     THIS.ormenabled = true;
-    THIS.ormSettings.datasource = getParams("ormdatasource");
+    THIS.ormSettings.datasource = getParams('ormdatasource');
 
-    THIS.mappings[ "/framework" ] = "#getDirectoryFromPath(getCurrentTemplatePath())#vendor/fw1/framework/";
+    THIS.mappings[ '/framework' ] = '#getDirectoryFromPath(getCurrentTemplatePath())#vendor/fw1/framework/';
+
+    THIS.customTagPaths = './customtags';
 
     VARIABLES.framework = {
         action = 'do',
@@ -17,8 +19,8 @@ component extends="vendor.fw1.framework.one" {
         defaultSection = 'home',
         defaultItem = 'welcome',
         reloadApplicationOnEveryRequest = true,
-        generateSES = true,
-        SESOmitIndex = true,
+        generateSES = false,
+        SESOmitIndex = false,
         diLocations = 'model,controllers',
         initMethod = 'configure'
     };
@@ -61,7 +63,7 @@ component extends="vendor.fw1.framework.one" {
     }
 
     public void function setupRequest(){
-
+ORMRELOAD();
         // get application language which may be overridden by user settings
         var languageService = getBeanFactory().getBean("LanguageService");
         REQUEST.language = languageService.getCurrentLanguage();
@@ -72,6 +74,12 @@ component extends="vendor.fw1.framework.one" {
         param name="REQUEST.momentStart" default="#GetTickCount()#";
         WriteOutput("Req set up");
 
+        var securityService = getBeanFactory().getBean("SecurityService");
+
+        REQUEST.user = securityService.getUser();
+
+        // check if current URL is accessible to user
+        // user should have roles and roles have tokens associated with them
         //APPLICATION.securityService.checkUser();
     }
 

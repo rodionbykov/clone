@@ -1,0 +1,42 @@
+﻿  
+
+  <cffunction name="pass" output="false" hint="Passing into system" returntype="Struct">
+    <cfargument name="arg_sessiontoken" required="true" type="string" />
+
+    <cfset var qryUser = "" />
+    <cfset var qryRoles = "" />
+    <cfset var user = EntityNew("User") />
+
+    <cfstoredproc procedure="usp_pass">
+      <cfprocparam type="in" cfsqltype="CF_SQL_VARCHAR" value="#ARGUMENTS.arg_sessiontoken#" />
+      <cfprocresult name="qryUser" resultset="1" />
+      <cfprocresult name="qryRoles" resultset="2" />
+    </cfstoredproc>
+
+    <cfif qryUser.recordcount eq 1>
+      <cfset user = EntityLoadByPK("User", qryUser.id) />
+      <cfset user.setSessionToken(qryUser.sessiontoken) />
+    </cfif>
+
+    <cfreturn user />
+  </cffunction>
+
+  <cffunction name="logout" output="false" hint="Log out action" returntype="Struct">
+    <cfargument name="arg_sessiontoken" required="true" type="string" />
+
+    <cfset var user = EntityNew("User") />
+
+    <cfstoredproc procedure="usp_logout">
+      <cfprocparam type="in" cfsqltype="CF_SQL_VARCHAR" value="#ARGUMENTS.arg_sessiontoken#" />
+      <cfprocresult name="qryUser" resultset="1" />
+    </cfstoredproc>
+
+    <cfif qryUser.recordcount eq 1>
+      <cfset LOCAL.user = EntityLoadByPK("User", qryUser.id) />
+      <cfset LOCAL.user.setSessionToken(qryUser.sessiontoken) />
+
+      <cflogout />
+    </cfif>
+
+    <cfreturn LOCAL.user />
+  </cffunction>

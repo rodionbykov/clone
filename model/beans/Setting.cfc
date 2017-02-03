@@ -1,6 +1,7 @@
-component persistent="true" entityname="Setting" table="settings" accessors="true" {
+component persistent="true" entityname="Setting" table="users_settings" accessors="true" {
 
-    property name="name" column="name" fieldType="id";
+    property name="id" fieldtype="id" generator="native" column="id" setter="false";
+    property name="name" column="name";
     property name="value" column="value";
     property name="valuetype" column="valuetype";
     property name="controltype" column="controltype";
