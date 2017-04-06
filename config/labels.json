@@ -1,0 +1,14 @@
+{
+    "en": {
+        "home": {
+            "title": "Hello, World!",
+            "welcome": "Welcome to the Clone"
+        }
+    },
+    "ru": {
+        "home": {
+            "title": "Добрый день!",
+            "welcome": "Clone приветствует вас"
+        }
+    }
+}

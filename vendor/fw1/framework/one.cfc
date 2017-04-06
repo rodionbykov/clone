@@ -1,4 +1,5 @@
 component {
+<<<<<<< HEAD
     variables._fw1_version = "3.0.1";
 /*
     Copyright (c) 2009-2015, Sean Corfield, Marcin Szczepanski, Ryan Cogswell
@@ -29,13 +30,62 @@ component {
     if ( len( getContextRoot() ) ) {
         request._fw1.cgiScriptName = replace( CGI.SCRIPT_NAME, getContextRoot(), '' );
         request._fw1.cgiPathInfo = replace( CGI.PATH_INFO, getContextRoot(), '' );
+=======
+    variables._fw1_version = "4.0.0";
+    /*
+      Copyright (c) 2009-2016, Sean Corfield, Marcin Szczepanski, Ryan Cogswell
+
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+    */
+
+    this.name = hash( getBaseTemplatePath() );
+    if ( !structKeyExists( request, '_fw1' ) ) {
+        request._fw1 = {
+            cgiScriptName = CGI.SCRIPT_NAME,
+            cgiPathInfo = CGI.PATH_INFO,
+            cgiRequestMethod = CGI.REQUEST_METHOD,
+            controllers = [ ],
+            requestDefaultsInitialized = false,
+            routeMethodsMatched = { },
+            doTrace = false,
+            trace = [ ]
+        };
+        if ( len( getContextRoot() ) ) {
+            request._fw1.cgiScriptName = replace( CGI.SCRIPT_NAME, getContextRoot(), '' );
+            request._fw1.cgiPathInfo = replace( CGI.PATH_INFO, getContextRoot(), '' );
+        }
+>>>>>>> develop
     }
     // do not rely on these, they are meant to be true magic...
     variables.magicApplicationSubsystem = '][';
     variables.magicApplicationController = '[]';
     variables.magicApplicationAction = '__';
     variables.magicBaseURL = '-[]-';
+<<<<<<< HEAD
     
+=======
+
+    // constructor if not extended via Application.cfc
+
+    public any function init( struct config = { } ) {
+        if ( !structKeyExists( variables, 'framework' ) ) {
+            variables.framework = { };
+        }
+        structAppend( variables.framework, config );
+        return this;
+    }
+
+>>>>>>> develop
     public void function abortController() {
         request._fw1.abortController = true;
         internalFrameworkTrace( 'abortController() called' );
@@ -43,6 +93,7 @@ component {
     }
 
     public boolean function actionSpecifiesSubsystem( string action ) {
+<<<<<<< HEAD
 
         if ( !usingSubsystems() ) {
             return false;
@@ -55,6 +106,15 @@ component {
         if ( !isArray( routes ) ) routes = [ routes ];
         if ( !isArray( methods ) ) methods = [ methods ];
         param name="variables.framework.routes" default="#[ ]#"; 
+=======
+        return find( variables.framework.subsystemDelimiter, action );
+    }
+
+    public void function addRoute( any routes, string target, any methods = [ ], string statusCode = '' ) {
+        if ( !isArray( routes ) ) routes = [ routes ];
+        if ( !isArray( methods ) ) methods = [ methods ];
+        param name="variables.framework.routes" default="#[ ]#";
+>>>>>>> develop
         if ( len( statusCode ) ) target = statusCode & ':' & target;
         for ( var route in routes ) {
             if ( arrayLen( methods ) ) {
@@ -98,13 +158,20 @@ component {
      */
     public string function buildURL( string action = '.', string path = variables.magicBaseURL, any queryString = '' ) {
         if ( action == '.' ) {
+<<<<<<< HEAD
             action = getFullyQualifiedAction();
         } else if ( left( action, 2 ) == '.?' ) {
             action = replace( action, '.', getFullyQualifiedAction() );
+=======
+            action = getSubsystemSectionAndItem();
+        } else if ( left( action, 2 ) == '.?' ) {
+            action = replace( action, '.', getSubsystemSectionAndItem() );
+>>>>>>> develop
         }
         var pathData = resolveBaseURL( action, path );
         path = pathData.path;
         var omitIndex = pathData.omitIndex;
+<<<<<<< HEAD
         // if queryString is a struct, massage it into a string
         if ( isStruct( queryString ) && structCount( queryString ) ) {
             var q = '';
@@ -118,6 +185,9 @@ component {
         else if ( !isSimpleValue( queryString ) ) {
             queryString = '';
         }
+=======
+        queryString = normalizeQueryString( queryString );
+>>>>>>> develop
         if ( queryString == '' ) {
             // extract query string from action section:
             var q = find( '?', action );
@@ -140,10 +210,17 @@ component {
                 }
             }
         }
+<<<<<<< HEAD
         var cosmeticAction = getFullyQualifiedAction( action );
         var isHomeAction = cosmeticAction == getFullyQualifiedAction( variables.framework.home );
         var isDefaultItem = getItem( cosmeticAction ) == variables.framework.defaultItem;
         
+=======
+        var cosmeticAction = getSubsystemSectionAndItem( action );
+        var isHomeAction = cosmeticAction == getSubsystemSectionAndItem( variables.framework.home );
+        var isDefaultItem = getItem( cosmeticAction ) == variables.framework.defaultItem;
+
+>>>>>>> develop
         var initialDelim = '?';
         var varDelim = '&';
         var equalDelim = '=';
@@ -169,11 +246,19 @@ component {
             ses = true;
         }
         var curDelim = varDelim;
+<<<<<<< HEAD
         
         if ( usingSubsystems() && getSubsystem( cosmeticAction ) == variables.framework.defaultSubsystem ) {
             cosmeticAction = getSectionAndItem( cosmeticAction );
         }
         
+=======
+
+        if ( getSubsystem( cosmeticAction ) == variables.framework.defaultSubsystem ) {
+            cosmeticAction = getSectionAndItem( cosmeticAction );
+        }
+
+>>>>>>> develop
         if ( len( queryString ) ) {
             // extract query part and anchor from query string:
             q = find( '?', queryString );
@@ -207,7 +292,11 @@ component {
                 extraArgs = listChangeDelims( extraArgs, '/', '&=' );
             }
         }
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> develop
         if ( ses ) {
             if ( isHomeAction && extraArgs == '' ) {
                 basePath = path;
@@ -226,7 +315,11 @@ component {
                 basePath = path & initialDelim & variables.framework.action & equalDelim & cosmeticAction;
             }
         }
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> develop
         if ( extraArgs != '' ) {
             basePath = basePath & curDelim & extraArgs;
             curDelim = varDelim;
@@ -255,8 +348,13 @@ component {
         var tuple = { };
 
         if ( structKeyExists( request._fw1, 'controllerExecutionStarted' ) ) {
+<<<<<<< HEAD
             raiseException( type='FW1.controllerExecutionStarted', message="Controller '#action#' may not be added at this point.",
                 detail='The controller execution phase has already started. Controllers may not be added by other controller methods.' );
+=======
+            throw( type='FW1.controllerExecutionStarted', message="Controller '#action#' may not be added at this point.",
+                   detail='The controller execution phase has already started. Controllers may not be added by other controller methods.' );
+>>>>>>> develop
         }
 
         tuple.controller = getController( section = section, subsystem = subsystem );
@@ -334,7 +432,11 @@ component {
     public string function getAction() {
         return variables.framework.action;
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> develop
     /*
      * returns the base URL for redirects and links etc
      * can be overridden if you need to modify this per-request
@@ -342,7 +444,11 @@ component {
     public string function getBaseURL() {
         return variables.framework.baseURL;
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> develop
     /*
      *  returns whatever the framework has been told is a bean factory
      *  this will return a subsystem-specific bean factory if one
@@ -356,9 +462,12 @@ component {
             }
             return getDefaultBeanFactory();
         }
+<<<<<<< HEAD
         if ( !usingSubsystems() ) {
             return getDefaultBeanFactory();
         }
+=======
+>>>>>>> develop
         if ( structKeyExists( request, 'subsystem' ) && len( request.subsystem ) > 0 ) {
             return getBeanFactory( request.subsystem );
         }
@@ -367,7 +476,11 @@ component {
         }
         return getDefaultBeanFactory();
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> develop
     /*
      * return the framework configuration
      */
@@ -381,7 +494,11 @@ component {
      * returns the bean factory set via setBeanFactory
      */
     public any function getDefaultBeanFactory() {
+<<<<<<< HEAD
         return application[ variables.framework.applicationKey ].factory;
+=======
+        return getFw1App().factory;
+>>>>>>> develop
     }
 
     /*
@@ -398,14 +515,23 @@ component {
         }
 
         if ( variables.framework.defaultSubsystem == '' ) {
+<<<<<<< HEAD
             raiseException( type='FW1.subsystemNotSpecified', message='No subsystem specified and no default configured.',
                     detail='When using subsystems, every request should specify a subsystem or variables.framework.defaultSubsystem should be configured.' );
+=======
+            throw( type='FW1.subsystemNotSpecified', message='No subsystem specified and no default configured.',
+                   detail='When using subsystems, every request should specify a subsystem or variables.framework.defaultSubsystem should be configured.' );
+>>>>>>> develop
         }
 
         return variables.framework.defaultSubsystem;
 
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> develop
     /*
      * override this to provide your environment selector
      */
@@ -430,6 +556,7 @@ component {
     public array function getFrameworkTrace() {
         return request._fw1.trace;
     }
+<<<<<<< HEAD
     
     /*
      * return an action with all applicable parts (subsystem, section, and item) specified
@@ -441,6 +568,36 @@ component {
         }
 
         return getSectionAndItem( action );
+=======
+
+    /*
+     * return an action with all applicable parts (subsystem, section, and item) specified
+     * using defaults from the configuration or request where appropriate
+     * if the subsystem is empty, do _not_ include the delimiter - compare this behavior
+     * with getSubsystemSectionAndItem() below
+     */
+    public string function getFullyQualifiedAction( string action = request.action ) {
+        var requested = getSubsystem( action );
+        if ( len( requested ) ) {
+            // request specifies non-empty subsystem, use it as-is:
+            return requested & variables.framework.subsystemDelimiter & getSectionAndItem( action );
+        } else {
+            var current = structKeyExists( request, 'action' ) ? getSubsystem( request.action ) : '';
+            if ( len( current ) ) {
+                // request has no subsystem but we're in one, special case
+                if ( actionSpecifiesSubsystem( action ) ) {
+                    // request had explicit empty subsystem so it means top-level app
+                    return variables.framework.subsystemDelimiter & getSectionAndItem( action );
+                } else {
+                    // request was meant to be relative to current subsystem
+                    return current & variables.framework.subsystemDelimiter & getSectionAndItem( action );
+                }
+            } else {
+                // neither appears to have subsystem, just use section and item
+                return getSectionAndItem( action );
+            }
+        }
+>>>>>>> develop
     }
 
     /*
@@ -449,55 +606,103 @@ component {
     public string function getHostname() {
         return createObject( 'java', 'java.net.InetAddress' ).getLocalHost().getHostName();
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> develop
     /*
      * return the item part of the action
      */
     public string function getItem( string action = request.action ) {
         return listLast( getSectionAndItem( action ), '.' );
     }
+<<<<<<< HEAD
     
     
     /*
      * return the current route (if any)
+=======
+
+    /*
+     * return this request's CGI method
+     */
+    public string function getCGIRequestMethod() {
+        return request._fw1.cgiRequestMethod;
+    }
+
+    /*
+     * return the current route (if any)
+     * this is the raw, matched route that we mapped
+>>>>>>> develop
      */
     public string function getRoute() {
         return structKeyExists( request._fw1, 'route' ) ? request._fw1.route : '';
     }
+<<<<<<< HEAD
     
     
+=======
+
+    /*
+     * return the part of the pathinfo that was used as the route
+     * prefixed by the HTTP method
+     */
+    public string function getRoutePath() {
+        return '$' & request._fw1.cgiRequestMethod & request._fw1.currentRoute;
+    }
+
+>>>>>>> develop
     /*
      * return the configured routes
      */
     public array function getRoutes() {
         return variables.framework.routes;
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> develop
     /*
      * return the resource route templates
      */
     public array function getResourceRouteTemplates() {
         return variables.framework.resourceRouteTemplates;
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> develop
     /*
      * return the section part of the action
      */
     public string function getSection( string action = request.action ) {
         return listFirst( getSectionAndItem( action ), '.' );
     }
+<<<<<<< HEAD
     
     
+=======
+
+
+>>>>>>> develop
     /*
      * return the action without the subsystem
      */
     public string function getSectionAndItem( string action = request.action ) {
         var sectionAndItem = '';
+<<<<<<< HEAD
 
         if ( usingSubsystems() && actionSpecifiesSubsystem( action ) ) {
             if ( listLen( action, variables.framework.subsystemDelimiter ) > 1 ) {
                 sectionAndItem = listLast( action, variables.framework.subsystemDelimiter );
             }
+=======
+        if ( actionSpecifiesSubsystem( action ) ) {
+            sectionAndItem = segmentLast( action, variables.framework.subsystemDelimiter );
+>>>>>>> develop
         } else {
             sectionAndItem = action;
         }
@@ -520,14 +725,23 @@ component {
 
         return sectionAndItem;
     }
+<<<<<<< HEAD
     
     
+=======
+
+
+>>>>>>> develop
     /*
      * return the subsystem part of the action
      */
     public string function getSubsystem( string action = request.action ) {
         if ( actionSpecifiesSubsystem( action ) ) {
+<<<<<<< HEAD
             return listFirst( action, variables.framework.subsystemDelimiter );
+=======
+            return segmentFirst( action, variables.framework.subsystemDelimiter );
+>>>>>>> develop
         }
         return getDefaultSubsystem();
     }
@@ -547,10 +761,17 @@ component {
 
         setupSubsystemWrapper( subsystem );
 
+<<<<<<< HEAD
         return application[ variables.framework.applicationKey ].subsystemFactories[ subsystem ];
 
     }
     
+=======
+        return getFw1App().subsystemFactories[ subsystem ];
+
+    }
+
+>>>>>>> develop
     /*
      * return the (optional) configuration for a subsystem
      */
@@ -563,6 +784,28 @@ component {
     }
 
     /*
+<<<<<<< HEAD
+=======
+     * return an action with all applicable parts (subsystem, section, and item) specified
+     * using defaults from the configuration or request where appropriate
+     * differs from getFullyQualifiedAction() in that it will _always_ contain the
+     * subsystem delimiter, even when the subsystem is blank
+     */
+    public string function getSubsystemSectionAndItem( string action = request.action ) {
+        if ( actionSpecifiesSubsystem( action ) ) {
+            return getSubsystem( action ) & variables.framework.subsystemDelimiter & getSectionAndItem( action );
+        } else {
+            var current = structKeyExists( request, 'action' ) ? getSubsystem( request.action ) : '';
+            if ( len( current ) ) {
+                return current & variables.framework.subsystemDelimiter & getSectionAndItem( action );
+            } else {
+                return variables.framework.subsystemDelimiter & getSectionAndItem( action );
+            }
+        }
+    }
+
+    /*
+>>>>>>> develop
      * returns true iff a call to getBeanFactory() will successfully return a bean factory
      * previously set via setBeanFactory or setSubsystemBeanFactory
      */
@@ -572,6 +815,7 @@ component {
             return true;
         }
 
+<<<<<<< HEAD
         if ( !usingSubsystems() ) {
             return false;
         }
@@ -582,6 +826,14 @@ component {
 
         if ( len(variables.framework.defaultSubsystem) > 0 ) {
             return hasSubsystemBeanFactory(variables.framework.defaultSubsystem);
+=======
+        if ( structKeyExists( request, 'subsystem' ) ) {
+            return hasSubsystemBeanFactory( request.subsystem );
+        }
+
+        if ( len( variables.framework.defaultSubsystem ) > 0 ) {
+            return hasSubsystemBeanFactory( variables.framework.defaultSubsystem );
+>>>>>>> develop
         }
 
         return false;
@@ -592,7 +844,11 @@ component {
      * returns true iff the framework has been told about a bean factory via setBeanFactory
      */
     public boolean function hasDefaultBeanFactory() {
+<<<<<<< HEAD
         return structKeyExists( application[ variables.framework.applicationKey ], 'factory' );
+=======
+        return structKeyExists( getFw1App(), 'factory' );
+>>>>>>> develop
     }
 
     /*
@@ -600,9 +856,16 @@ component {
      */
     public boolean function hasSubsystemBeanFactory( string subsystem ) {
 
+<<<<<<< HEAD
         ensureNewFrameworkStructsExist();
 
         return structKeyExists( application[ variables.framework.applicationKey ].subsystemFactories, subsystem );
+=======
+        if ( !len( subsystem ) ) return false;
+        setupSubsystemWrapper( subsystem );
+
+        return structKeyExists( getFw1App().subsystemFactories, subsystem );
+>>>>>>> develop
 
     }
 
@@ -611,8 +874,24 @@ component {
      * executing action (after both have been expanded)
      */
     public boolean function isCurrentAction( string action ) {
+<<<<<<< HEAD
         return getFullyQualifiedAction( action ) ==
             getFullyQualifiedAction();
+=======
+        return getSubsystemSectionAndItem( action ) ==
+            getSubsystemSectionAndItem();
+    }
+
+    /*
+     * returns true if this request has a valid reload URL parameter
+     */
+    public boolean function isFrameworkReloadRequest() {
+        setupRequestDefaults();
+        return ( isDefined( 'URL' ) &&
+                 structKeyExists( URL, variables.framework.reload ) &&
+                 URL[ variables.framework.reload ] == variables.framework.password ) ||
+            variables.framework.reloadApplicationOnEveryRequest;
+>>>>>>> develop
     }
 
     /*
@@ -627,9 +906,15 @@ component {
         // the requested template.
         // NOTE: for unhandledPaths, we make the list into an escaped
         // regular expression so we match on subdirectories, meaning
+<<<<<<< HEAD
         // /myexcludepath will match '/myexcludepath' and all subdirectories  
         return listFindNoCase( variables.framework.unhandledExtensions,
                                listLast( targetPath, '.' ) ) || 
+=======
+        // /myexcludepath will match '/myexcludepath' and all subdirectories
+        return listFindNoCase( variables.framework.unhandledExtensions,
+                               listLast( targetPath, '.' ) ) ||
+>>>>>>> develop
             REFindNoCase( '^(' & variables.framework.unhandledPathRegex & ')',
                           targetPath );
     }
@@ -652,7 +937,10 @@ component {
      * super.onApplicationStart() first
      */
     public any function onApplicationStart() {
+<<<<<<< HEAD
         setupFrameworkDefaults();
+=======
+>>>>>>> develop
         setupRequestDefaults();
         setupApplicationWrapper();
     }
@@ -668,11 +956,19 @@ component {
         try {
             if ( !structKeyExists( variables, 'framework' ) ||
                  !structKeyExists( variables.framework, 'version' ) ) {
+<<<<<<< HEAD
               // error occurred before framework was initialized
               failure( exception, event, false, true );
               return;
             }
             
+=======
+                // error occurred before framework was initialized
+                failure( exception, event, false, true );
+                return;
+            }
+
+>>>>>>> develop
             // record details of the exception:
             if ( structKeyExists( request, 'action' ) ) {
                 request.failedAction = request.action;
@@ -681,7 +977,10 @@ component {
             request.event = event;
             // reset lifecycle flags:
             structDelete( request, 'layout' );
+<<<<<<< HEAD
             structDelete( request._fw1, 'controllerExecutionComplete' );
+=======
+>>>>>>> develop
             structDelete( request._fw1, 'controllerExecutionStarted' );
             structDelete( request._fw1, 'overrideViewAction' );
             if ( structKeyExists( request._fw1, 'renderData' ) ) {
@@ -695,7 +994,11 @@ component {
             }
             // setup the new controller action, based on the error action:
             request._fw1.controllers = [ ];
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> develop
             if ( structKeyExists( variables, 'framework' ) && structKeyExists( variables.framework, 'error' ) ) {
                 request.action = variables.framework.error;
             } else {
@@ -738,10 +1041,17 @@ component {
      * this can be overridden if you want to change the behavior when
      * FW/1 cannot find a matching view
      */
+<<<<<<< HEAD
     public string function onMissingView( struct rc ) {
         // unable to find a matching view - fail with a nice exception
         viewNotFound();
         // if we got here, we would return the string to be rendered
+=======
+    public any function onMissingView( struct rc ) {
+        // unable to find a matching view - fail with a nice exception
+        viewNotFound();
+        // if we got here, we would return the string or struct to be rendered
+>>>>>>> develop
         // but viewNotFound() throws an exception...
         // for example, return view( 'main.missing' );
     }
@@ -771,6 +1081,7 @@ component {
         var n = 0;
 
         request._fw1.controllerExecutionStarted = true;
+<<<<<<< HEAD
         try {
             n = arrayLen( request._fw1.controllers );
             for ( i = 1; i <= n; i = i + 1 ) {
@@ -797,6 +1108,47 @@ component {
             // do "nothing" since this is a control flow exception
         }
         request._fw1.controllerExecutionComplete = true;
+=======
+        if ( variables.framework.preflightOptions &&
+             request._fw1.cgiRequestMethod == "OPTIONS" &&
+             structCount( request._fw1.routeMethodsMatched ) ) {
+            // OPTIONS support enabled and at least one possible match
+            // bypass all normal controllers and render headers and data:
+            var resp = getPageContext().getResponse();
+            resp.setHeader( "Access-Control-Allow-Origin", variables.framework.optionsAccessControl.origin );
+            resp.setHeader( "Access-Control-Allow-Methods", "OPTIONS," & uCase( structKeyList( request._fw1.routeMethodsMatched ) ) );
+            resp.setHeader( "Access-Control-Allow-Headers", variables.framework.optionsAccessControl.headers );
+            resp.setHeader( "Access-Control-Allow-Credentials", variables.framework.optionsAccessControl.credentials ? "true" : "false" );
+            resp.setHeader( "Access-Control-Max-Age", "#variables.framework.optionsAccessControl.maxAge#" );
+            renderData( "text", "" );
+        } else {
+            try {
+                n = arrayLen( request._fw1.controllers );
+                for ( i = 1; i <= n; i = i + 1 ) {
+                    tuple = request._fw1.controllers[ i ];
+                    // run before once per controller:
+                    if ( !structKeyExists( once, tuple.key ) ) {
+                        once[ tuple.key ] = i;
+                        doController( tuple, 'before', 'before' );
+                        if ( structKeyExists( request._fw1, 'abortController' ) ) abortController();
+                    }
+                    doController( tuple, tuple.item, 'item' );
+                    if ( structKeyExists( request._fw1, 'abortController' ) ) abortController();
+                }
+                n = arrayLen( request._fw1.controllers );
+                for ( i = n; i >= 1; i = i - 1 ) {
+                    tuple = request._fw1.controllers[ i ];
+                    // run after once per controller (in reverse order):
+                    if ( once[ tuple.key ] eq i ) {
+                        doController( tuple, 'after', 'after' );
+                        if ( structKeyExists( request._fw1, 'abortController' ) ) abortController();
+                    }
+                }
+            } catch ( FW1.AbortControllerException e ) {
+                // do "nothing" since this is a control flow exception
+            }
+        }
+>>>>>>> develop
 
         if ( structKeyExists( request._fw1, 'renderData' ) ) {
             out = renderDataWithContentType();
@@ -815,7 +1167,11 @@ component {
                 internalFrameworkTrace( 'onMissingView() called' );
                 out = onMissingView( request.context );
             }
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> develop
             buildLayoutQueue();
             for ( i = 1; i <= arrayLen(request._fw1.layouts); i = i + 1 ) {
                 if ( structKeyExists(request, 'layout') && !request.layout ) {
@@ -826,7 +1182,23 @@ component {
                 out = internalLayout( request._fw1.layouts[i], out );
             }
         }
+<<<<<<< HEAD
         writeOutput( out );
+=======
+        if ( isSimpleValue( out ) ) {
+            writeOutput( out );
+        } else {
+            if ( structKeyExists( out, 'contentType' ) ) {
+                var resp = getPageContext().getResponse();
+                resp.setContentType( out.contentType );
+            }
+            if ( structKeyExists( out, 'writer' ) ) {
+                out.writer( out.output );
+            } else {
+                writeOutput( out.output );
+            }
+        }
+>>>>>>> develop
         setupResponseWrapper();
     }
 
@@ -845,22 +1217,38 @@ component {
      * super.onRequestStart() first
      */
     public any function onRequestStart( string targetPath ) {
+<<<<<<< HEAD
         setupFrameworkDefaults();
+=======
+>>>>>>> develop
         setupRequestDefaults();
 
         if ( !isFrameworkInitialized() || isFrameworkReloadRequest() ) {
             setupApplicationWrapper();
+<<<<<<< HEAD
+=======
+        } else {
+            request._fw1.theApp = getFw1App();
+>>>>>>> develop
         }
 
         restoreFlashContext();
         // ensure flash context cannot override request action:
         request.context[variables.framework.action] = request.action;
 
+<<<<<<< HEAD
         if ( isUnhandledRequest( targetPath ) ) {       
             structDelete(this, 'onRequest');
             structDelete(variables, 'onRequest');
             structDelete(this, 'onRequestEnd');
             structDelete(variables, 'onRequestEnd');            
+=======
+        if ( isUnhandledRequest( targetPath ) ) {
+            structDelete(this, 'onRequest');
+            structDelete(variables, 'onRequest');
+            structDelete(this, 'onRequestEnd');
+            structDelete(variables, 'onRequestEnd');
+>>>>>>> develop
             if ( !variables.framework.unhandledErrorCaught ) {
                 structDelete(this, 'onError');
                 structDelete(variables, 'onError');
@@ -877,11 +1265,18 @@ component {
      * super.onSessionStart() first
      */
     public any function onSessionStart() {
+<<<<<<< HEAD
         setupFrameworkDefaults();
         setupRequestDefaults();
         setupSessionWrapper();
     }
     
+=======
+        setupRequestDefaults();
+        setupSessionWrapper();
+    }
+
+>>>>>>> develop
     // populate() may be invoked inside controllers
     public any function populate( any cfc, string keys = '', boolean trustKeys = false, boolean trim = false, boolean deep = false, any properties = '' ) {
         var props = isSimpleValue( properties ) ? request.context : properties;
@@ -893,7 +1288,11 @@ component {
                         var args = { };
                         args[ property ] = props[ property ];
                         if ( trim && isSimpleValue( args[ property ] ) ) args[ property ] = trim( args[ property ] );
+<<<<<<< HEAD
                         // cfc[ 'set'&property ]( argumentCollection = args ); // ugh! no portable script version of this?!?!                       
+=======
+                        // cfc[ 'set'&property ]( argumentCollection = args ); // ugh! no portable script version of this?!?!
+>>>>>>> develop
                         setProperty( cfc, property, args );
                     } catch ( any e ) {
                         onPopulateError( cfc, property, props );
@@ -964,12 +1363,23 @@ component {
     }
 
     // call from your controller to redirect to a clean URL based on an action, pushing data to flash scope if necessary:
+<<<<<<< HEAD
     public void function redirect( string action, string preserve = 'none', string append = 'none', string path = variables.magicBaseURL, string queryString = '', string statusCode = '302' ) {
+=======
+    public void function redirect(
+        string action, string preserve = 'none', string append = 'none', string path = variables.magicBaseURL,
+        string queryString = '', string statusCode = '302', string header = ''
+    ) {
+>>>>>>> develop
         if ( path == variables.magicBaseURL ) path = getBaseURL();
         var preserveKey = '';
         if ( preserve != 'none' ) {
             preserveKey = saveFlashContext( preserve );
         }
+<<<<<<< HEAD
+=======
+        queryString = normalizeQueryString( queryString );
+>>>>>>> develop
         var baseQueryString = '';
         if ( append != 'none' ) {
             if ( append == 'all' ) {
@@ -985,10 +1395,17 @@ component {
                         baseQueryString = listAppend( baseQueryString, key & '=' & urlEncodedFormat( request.context[ key ] ), '&' );
                     }
                 }
+<<<<<<< HEAD
                 
             }
         }
         
+=======
+
+            }
+        }
+
+>>>>>>> develop
         if ( baseQueryString != '' ) {
             if ( queryString != '' ) {
                 if ( left( queryString, 1 ) == '?' || left( queryString, 1 ) == '##' ) {
@@ -1000,7 +1417,11 @@ component {
         } else {
             baseQueryString = queryString;
         }
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> develop
         var targetURL = buildURL( action, path, baseQueryString );
         if ( preserveKey != '' && variables.framework.maxNumContextsPreserved > 1 ) {
             if ( find( '?', targetURL ) ) {
@@ -1023,12 +1444,27 @@ component {
                 // ignore exception if session is not enabled
             }
         }
+<<<<<<< HEAD
         location( targetURL, false, statusCode );
+=======
+        if ( len( header ) ) {
+            // per #338 support custom header-based redirect
+            getPageContext().getResponse().setStatus( statusCode );
+            getPageContext().getResponse().setHeader( header, targetURL );
+            abortController();
+        } else {
+            location( targetURL, false, statusCode );
+        }
+>>>>>>> develop
     }
 
     // append and querystring are not supported here: you are providing the URI so
     // you are responsible for all of its contents
+<<<<<<< HEAD
     public void function redirectCustomURL( string uri, string preserve = 'none', string statusCode = '302' ) {
+=======
+    public void function redirectCustomURL( string uri, string preserve = 'none', string statusCode = '302', string header = '' ) {
+>>>>>>> develop
         var preserveKey = '';
         if ( preserve != 'none' ) {
             preserveKey = saveFlashContext( preserve );
@@ -1055,6 +1491,7 @@ component {
                 // ignore exception if session is not enabled
             }
         }
+<<<<<<< HEAD
         location( targetURL, false, statusCode );
     }
 
@@ -1063,6 +1500,75 @@ component {
         request._fw1.renderData = { type = type, data = data, statusCode = statusCode };
     }
     
+=======
+        if ( len( header ) ) {
+            // per #338 support custom header-based redirect
+            getPageContext().getResponse().setStatus( statusCode );
+            getPageContext().getResponse().setHeader( header, targetURL );
+            abortController();
+        } else {
+            location( targetURL, false, statusCode );
+        }
+    }
+
+    // call this to render data rather than a view and layouts
+    // arguments are deprecated in favor of build syntax as of 4.0
+    public any function renderData( string type = '', any data = '', numeric statusCode = 200, string jsonpCallback = "" ) {
+        if ( statusCode != 200 ) deprecated( false, "Use the .statusCode() builder syntax instead of the inline argument." );
+        if ( len( jsonpCallback ) ) deprecated( false, "Use the .jsonpCallback() builder syntax instead of the inline argument." );
+        request._fw1.renderData = {
+            type = type,
+            data = data,
+            statusCode = statusCode,
+            statusText = '',
+            jsonpCallback = jsonpCallback
+        };
+        // return a builder to support nicer rendering syntax
+        return renderer();
+    }
+
+    public any function renderer() {
+        var builder = { };
+        structAppend( builder, {
+            // allow type and data to be overridden just for completeness
+            type : function( v ) {
+                if ( !structKeyExists( request._fw1, 'renderData' ) ) request._fw1.renderData = { };
+                request._fw1.renderData.type = v;
+                return builder;
+            },
+            data : function( v ) {
+                if ( !structKeyExists( request._fw1, 'renderData' ) ) request._fw1.renderData = { };
+                request._fw1.renderData.data = v;
+                return builder;
+            },
+            header : function( h, v ) {
+                if ( !structKeyExists( request._fw1, 'renderData' ) ) request._fw1.renderData = { };
+                if ( !structKeyExists( request._fw1.renderData, 'headers' ) ) {
+                    request._fw1.renderData.headers = [ ];
+                }
+                arrayAppend( request._fw1.renderData.headers, { name = h, value = v } );
+                return builder;
+            },
+            statusCode : function( v ) {
+                if ( !structKeyExists( request._fw1, 'renderData' ) ) request._fw1.renderData = { };
+                request._fw1.renderData.statusCode = v;
+                return builder;
+            },
+            statusText : function( v ) {
+                if ( !structKeyExists( request._fw1, 'renderData' ) ) request._fw1.renderData = { };
+                request._fw1.renderData.statusText = v;
+                return builder;
+            },
+            jsonpCallback : function( v ) {
+                if ( !structKeyExists( request._fw1, 'renderData' ) ) request._fw1.renderData = { };
+                request._fw1.renderData.jsonpCallback = v;
+                return builder;
+            }
+        } );
+        return builder;
+    }
+
+>>>>>>> develop
     /*
      * call this from your setupApplication() method to tell the framework
      * about your bean factory - only assumption is that it supports:
@@ -1071,12 +1577,33 @@ component {
      */
     public void function setBeanFactory( any beanFactory ) {
         if ( isObject( beanFactory ) ) {
+<<<<<<< HEAD
             application[ variables.framework.applicationKey ].factory = beanFactory;
         } else {
             structDelete( application[variables.framework.applicationKey], "factory" );
         }
         // to address #276 flush controller cache when bean factory is reset:
         application[ variables.framework.applicationKey ].cache.controllers = { };
+=======
+            if ( structKeyExists( getFw1App(), "factory" ) ) {
+                if ( variables.framework.diOverrideAllowed ) {
+                    // we still log a warning because this is strange behavior
+                    var out = createObject( "java", "java.lang.System" ).out;
+                    out.println( "FW/1: WARNING: setBeanFactory() called more than once - use diEngine = 'none'?" );
+                    internalFrameworkTrace( message = "FW/1: WARNING: setBeanFactory() called more than once - use diEngine = 'none'?", traceType = 'WARNING' );
+                } else {
+                    throw( type = "FW1.Warning",
+                           message = "setBeanFactory() called more than once - use diEngine = 'none'?",
+                           detail = "Either set diEngine to 'none' or let FW/1 manage your bean factory for you." );
+                }
+            }
+            getFw1App().factory = beanFactory;
+        } else {
+            structDelete( getFw1App(), "factory" );
+        }
+        // to address #276 flush controller cache when bean factory is reset:
+        getFw1App().cache.controllers = { };
+>>>>>>> develop
 
     }
 
@@ -1084,10 +1611,17 @@ component {
      * use this to override the default layout
      */
     public void function setLayout( string action, boolean suppressOtherLayouts = false ) {
+<<<<<<< HEAD
         request._fw1.overrideLayoutAction = validateAction( action );
         request._fw1.suppressOtherLayouts = suppressOtherLayouts;
     }
     
+=======
+        request._fw1.overrideLayoutAction = validateAction( getFullyQualifiedAction( action ) );
+        request._fw1.suppressOtherLayouts = suppressOtherLayouts;
+    }
+
+>>>>>>> develop
     /*
      * call this from your setupSubsystem() method to tell the framework
      * about your subsystem-specific bean factory - only assumption is that it supports:
@@ -1097,7 +1631,11 @@ component {
     public void function setSubsystemBeanFactory( string subsystem, any factory ) {
 
         ensureNewFrameworkStructsExist();
+<<<<<<< HEAD
         application[ variables.framework.applicationKey ].subsystemFactories[ subsystem ] = factory;
+=======
+        getFw1App().subsystemFactories[ subsystem ] = factory;
+>>>>>>> develop
 
     }
 
@@ -1149,19 +1687,31 @@ component {
      * and handle it yourself
      */
     public void function setupTraceRender( string output = 'html' ) { }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> develop
     /*
      * override this to provide pre-rendering logic, e.g., to
      * populate the request context with globally required data
      * you do not need to call super.setupView()
      */
     public void function setupView( struct rc ) { }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> develop
     /*
      * use this to override the default view
      */
     public void function setView( string action ) {
+<<<<<<< HEAD
         request._fw1.overrideViewAction = validateAction( action );
+=======
+        request._fw1.overrideViewAction = validateAction( getFullyQualifiedAction( action ) );
+>>>>>>> develop
     }
 
     /*
@@ -1170,13 +1720,22 @@ component {
     public boolean function usingSubsystems() {
         return variables.framework.usingSubsystems;
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> develop
     /*
      * view() may be invoked inside views and layouts
      * returns the UI generated by the named view
      */
+<<<<<<< HEAD
     public string function view( string path, struct args = { },
                                  any missingView = { } ) {
+=======
+    public any function view( string path, struct args = { },
+                              any missingView = { } ) {
+>>>>>>> develop
         var viewPath = parseViewOrLayoutPath( path, 'view' );
         if ( cachedFileExists( viewPath ) ) {
             internalFrameworkTrace( 'view( #path# ) called - rendering #viewPath#' );
@@ -1194,9 +1753,15 @@ component {
             return onMissingView( request.context );
         }
     }
+<<<<<<< HEAD
     
     // THE FOLLOWING METHODS SHOULD ALL BE CONSIDERED PRIVATE / UNCALLABLE
     
+=======
+
+    // THE FOLLOWING METHODS SHOULD ALL BE CONSIDERED PRIVATE / UNCALLABLE
+
+>>>>>>> develop
     private void function autowire( any cfc, any beanFactory ) {
         var setters = findImplicitAndExplicitSetters( cfc );
         for ( var property in setters ) {
@@ -1208,7 +1773,11 @@ component {
             }
         }
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> develop
     private void function buildLayoutQueue() {
         var siteWideLayoutBase = request.base & getSubsystemDirPrefix( variables.framework.siteWideLayoutSubsystem );
         var testLayout = 0;
@@ -1217,10 +1786,17 @@ component {
         var section = request.section;
         var item = request.item;
         var subsystembase = '';
+<<<<<<< HEAD
         
         request._fw1.layouts = [ ];
         var cascadeLayouts = true; // default can be overridden via setLayout() second argument
         
+=======
+
+        request._fw1.layouts = [ ];
+        var cascadeLayouts = true; // default can be overridden via setLayout() second argument
+
+>>>>>>> develop
         // has layout been overridden?
         if ( structKeyExists( request._fw1, 'overrideLayoutAction' ) ) {
             subsystem = getSubsystem( request._fw1.overrideLayoutAction );
@@ -1230,13 +1806,21 @@ component {
             if ( structKeyExists( request._fw1, 'suppressOtherLayouts' ) ) {
                 cascadeLayouts = !request._fw1.suppressOtherLayouts;
                 structDelete( request._fw1, 'suppressOtherLayouts' );
+<<<<<<< HEAD
             } 
+=======
+            }
+>>>>>>> develop
         }
         subsystembase = request.base & getSubsystemDirPrefix( subsystem );
         internalFrameworkTrace( 'building layout queue', subsystem, section, item );
         // look for item-specific layout:
         testLayout = parseViewOrLayoutPath( subsystem & variables.framework.subsystemDelimiter &
+<<<<<<< HEAD
                                                     section & '/' & item, 'layout' );
+=======
+                                            section & '/' & item, 'layout' );
+>>>>>>> develop
         if ( cachedFileExists( testLayout ) ) {
             internalFrameworkTrace( 'found item-specific layout #testLayout#', subsystem, section, item );
             arrayAppend( request._fw1.layouts, testLayout );
@@ -1257,11 +1841,28 @@ component {
                 }
             }
             // look for site-wide layout (only applicable if using subsystems)
+<<<<<<< HEAD
             if ( usingSubsystems() && siteWideLayoutBase != subsystembase ) {
                 testLayout = parseViewOrLayoutPath( variables.framework.siteWideLayoutSubsystem &
                                                     variables.framework.subsystemDelimiter & 'default', 'layout' );
                 if ( cachedFileExists( testLayout ) ) {
                     internalFrameworkTrace( 'found #variables.framework.siteWideLayoutSubsystem# layout #testLayout#',
+=======
+            if ( usingSubsystems() ) {
+                if ( siteWideLayoutBase != subsystembase ) {
+                    testLayout = parseViewOrLayoutPath( variables.framework.siteWideLayoutSubsystem &
+                                                        variables.framework.subsystemDelimiter & 'default', 'layout' );
+                    if ( cachedFileExists( testLayout ) ) {
+                        internalFrameworkTrace( 'found #variables.framework.siteWideLayoutSubsystem# layout #testLayout#',
+                                                subsystem, section, item );
+                        arrayAppend( request._fw1.layouts, testLayout );
+                    }
+                }
+            } else if ( len( subsystem ) ) {
+                testLayout = parseViewOrLayoutPath( variables.framework.subsystemDelimiter & 'default', 'layout' );
+                if ( cachedFileExists( testLayout ) ) {
+                    internalFrameworkTrace( 'found application layout #testLayout#',
+>>>>>>> develop
                                             subsystem, section, item );
                     arrayAppend( request._fw1.layouts, testLayout );
                 }
@@ -1276,7 +1877,11 @@ component {
         var section = request.section;
         var item = request.item;
         var subsystembase = '';
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> develop
         // has view been overridden?
         if ( structKeyExists( request._fw1, 'overrideViewAction' ) ) {
             subsystem = getSubsystem( request._fw1.overrideViewAction );
@@ -1288,7 +1893,11 @@ component {
         internalFrameworkTrace( 'building view queue', subsystem, section, item );
         // view and layout setup - used to be in setupRequestWrapper():
         request._fw1.view = parseViewOrLayoutPath( subsystem & variables.framework.subsystemDelimiter &
+<<<<<<< HEAD
                                                     section & '/' & item, 'view' );
+=======
+                                                   section & '/' & item, 'view' );
+>>>>>>> develop
         if ( cachedFileExists( request._fw1.view ) ) {
             internalFrameworkTrace( 'found view #request._fw1.view#', subsystem, section, item );
         } else {
@@ -1301,7 +1910,11 @@ component {
 
 
     private boolean function cachedFileExists( string filePath ) {
+<<<<<<< HEAD
         var cache = application[ variables.framework.applicationKey ].cache;
+=======
+        var cache = getFw1App().cache;
+>>>>>>> develop
         if ( !variables.framework.cacheFileExists ) {
             return fileExists( expandPath( filePath) );
         }
@@ -1311,8 +1924,13 @@ component {
         }
         return cache.fileExists[ filePath ];
     }
+<<<<<<< HEAD
     
     
+=======
+
+
+>>>>>>> develop
     private string function cfcFilePath( string dottedPath ) {
         if ( dottedPath == '' ) {
             return '/';
@@ -1329,15 +1947,26 @@ component {
         } else {
             var out = createObject( "java", "java.lang.System" ).out;
             out.println( "FW/1: DEPRECATED: " & message );
+<<<<<<< HEAD
         }
     }
     
+=======
+            internalFrameworkTrace( message = "FW/1: DEPRECATED: " & message, traceType = 'DEPRECATED' );
+        }
+    }
+
+>>>>>>> develop
     private void function doController( struct tuple, string method, string lifecycle ) {
         var cfc = tuple.controller;
         if ( structKeyExists( cfc, method ) ) {
             try {
                 internalFrameworkTrace( 'calling #lifecycle# controller', tuple.subsystem, tuple.section, method );
+<<<<<<< HEAD
                 evaluate( 'cfc.#method#( rc = request.context )' );
+=======
+                evaluate( 'cfc.#method#( rc = request.context, headers = request._fw1.headers )' );
+>>>>>>> develop
             } catch ( any e ) {
                 setCfcMethodFailureInfo( cfc, method );
                 rethrow;
@@ -1345,7 +1974,11 @@ component {
         } else if ( structKeyExists( cfc, 'onMissingMethod' ) ) {
             try {
                 internalFrameworkTrace( 'calling #lifecycle# controller (via onMissingMethod)', tuple.subsystem, tuple.section, method );
+<<<<<<< HEAD
                 evaluate( 'cfc.#method#( rc = request.context, method = lifecycle )' );
+=======
+                evaluate( 'cfc.#method#( rc = request.context, method = lifecycle, headers = request._fw1.headers )' );
+>>>>>>> develop
             } catch ( any e ) {
                 setCfcMethodFailureInfo( cfc, method );
                 rethrow;
@@ -1354,6 +1987,7 @@ component {
             internalFrameworkTrace( 'no #lifecycle# controller to call', tuple.subsystem, tuple.section, method );
         }
     }
+<<<<<<< HEAD
     
     private void function dumpException( any exception ) {
         writeDump( var = exception, label = 'Exception - click to expand', expand = false );
@@ -1368,6 +2002,22 @@ component {
         }
 
         if ( !structKeyExists(framework, 'subsystems') ) {
+=======
+
+    private void function dumpException( any exception ) {
+        writeDump( var = exception, label = 'Exception - click to expand', expand = false );
+    }
+
+    private void function ensureNewFrameworkStructsExist() {
+
+        var framework = getFw1App();
+
+        if ( !structKeyExists( framework, 'subsystemFactories' ) ) {
+            framework.subsystemFactories = { };
+        }
+
+        if ( !structKeyExists( framework, 'subsystems' ) ) {
+>>>>>>> develop
             framework.subsystems = { };
         }
 
@@ -1388,7 +2038,11 @@ component {
             }
             writeOutput( '<h#1+h#>#exception.message#</h#1+h#>' );
         }
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> develop
         writeOutput( '<p>#exception.detail# (#exception.type#)</p>' );
         dumpException(exception);
 
@@ -1419,7 +2073,11 @@ component {
                     for ( var i = 1; i <= n; ++i ) {
                         var property = md.properties[ i ];
                         if ( implicitSetters ||
+<<<<<<< HEAD
                                 structKeyExists( property, 'setter' ) && isBoolean( property.setter ) && property.setter ) {
+=======
+                             structKeyExists( property, 'setter' ) && isBoolean( property.setter ) && property.setter ) {
+>>>>>>> develop
                             setters[ property.name ] = 'implicit';
                         }
                     }
@@ -1460,8 +2118,13 @@ component {
             writeOutput( '<hr /><div id="fw1_trace" style="background: ##ccdddd; color: black; border: 1px solid; border-color: black; padding: 5px; #font#">' );
             writeOutput( '<div style="#font# font-weight: bold; font-size: large; float: left;">Framework Lifecycle Trace</div><div style="clear: both;"></div>' );
             var table = '<table style="border: 1px solid; border-color: black; color: black; #font#" width="100%">' &
+<<<<<<< HEAD
                       '<tr><th style="text-align:right;" width="5%">time</th><th style="text-align:right;" width="5%">delta</th>' &
                       '<th width="10%">action</th><th>message</th></tr>';
+=======
+                '<tr><th style="text-align:right;" width="5%">time</th><th style="text-align:right;" width="5%">delta</th>' &
+                '<th style="text-align:center;">type</th><th width="10%">action</th><th>message</th></tr>';
+>>>>>>> develop
             writeOutput( table );
             var colors = [ '##ccd4dd', '##ccddcc' ];
             var row = 0;
@@ -1470,6 +2133,14 @@ component {
             for ( var i = 1; i <= n; ++i ) {
                 var trace = request._fw1.trace[i];
                 var nextTraceTick = i + 1 <= n ? request._fw1.trace[i+1].tick : trace.tick;
+<<<<<<< HEAD
+=======
+                var color = '##000';
+                var traceType = structKeyExists( trace, 't' ) ? trace.t : 'INFO';
+                if ( trace.msg.startsWith( 'no ' ) ) color = '##cc8888';
+                else if ( trace.msg.startsWith( 'onError( ' ) || traceType == 'ERROR' ) color = '##cc0000';
+                else if ( traceType == 'WARNING' ) color = '##d44b0f';
+>>>>>>> develop
                 var action = '';
                 if ( trace.s == variables.magicApplicationController || trace.sub == variables.magicApplicationSubsystem ) {
                     action = '<em>Application.cfc</em>';
@@ -1496,11 +2167,21 @@ component {
                     writeOutput('#duration - lastDuration#ms');
                 }
                 lastDuration = duration;
+<<<<<<< HEAD
                 writeOutput('</td>' );
                 writeOutput( '<td style="border: 0; color: black; #font# font-size: small;padding-left: 5px;" width="10%">#action#</td>' );
                 var color =
                     trace.msg.startsWith( 'no ' ) ? '##cc8888' :
                         trace.msg.startsWith( 'onError( ' ) ? '##cc0000' : '##000';
+=======
+                writeOutput( '</td>' );
+                if ( !structKeyExists( trace, 't' ) || trace.t == 'INFO' ) {
+                    writeOutput( '<td>&nbsp;</td>' );
+                } else {
+                    writeOutput( '<td style="text-align: center; color: #color#">#ucase(trace.t)#</td>' );
+                }
+                writeOutput( '<td style="border: 0; color: black; #font# font-size: small;padding-left: 5px;" width="10%">#action#</td>' );
+>>>>>>> develop
                 writeOutput( '<td style="border: 0; color: #color#; #font# font-size: small;">#trace.msg#' );
                 if ( structKeyExists( trace, 'v' ) ) {
                     writeOutput( '<br />' );
@@ -1519,18 +2200,33 @@ component {
     private any function getCachedController( string subsystem, string section ) {
 
         setupSubsystemWrapper( subsystem );
+<<<<<<< HEAD
         var cache = application[variables.framework.applicationKey].cache;
+=======
+        var cache = getFw1App().cache;
+>>>>>>> develop
         var cfc = 0;
         var subsystemDir = getSubsystemDirPrefix( subsystem );
         var subsystemDot = replace( subsystemDir, '/', '.', 'all' );
         var subsystemUnderscore = replace( subsystemDir, '/', '_', 'all' );
         var componentKey = subsystemUnderscore & section;
+<<<<<<< HEAD
         var beanName = section & "controller";
         
         if ( !structKeyExists( cache.controllers, componentKey ) ) {
             lock name="fw1_#application.applicationName#_#variables.framework.applicationKey#_#componentKey#" type="exclusive" timeout="30" {
                 if ( !structKeyExists( cache.controllers, componentKey ) ) {
                     if ( usingSubsystems() && hasSubsystemBeanFactory( subsystem ) && getSubsystemBeanFactory( subsystem ).containsBean( beanName ) ) {
+=======
+        var beanName = section & variables.controllerFolder;
+        var controllersSlash = variables.framework.controllersFolder & '/';
+        var controllersDot = variables.framework.controllersFolder & '.';
+        // per #310 we no longer cache the Application controller since it is new on each request
+        if ( !structKeyExists( cache.controllers, componentKey ) || section == variables.magicApplicationController ) {
+            lock name="fw1_#application.applicationName#_#variables.framework.applicationKey#_#componentKey#" type="exclusive" timeout="30" {
+                if ( !structKeyExists( cache.controllers, componentKey ) || section == variables.magicApplicationController ) {
+                    if ( hasSubsystemBeanFactory( subsystem ) && getSubsystemBeanFactory( subsystem ).containsBean( beanName ) ) {
+>>>>>>> develop
                         cfc = getSubsystemBeanFactory( subsystem ).getBean( beanName );
                     } else if ( !usingSubsystems() && hasDefaultBeanFactory() && getDefaultBeanFactory().containsBean( beanName ) ) {
                         cfc = getDefaultBeanFactory().getBean( beanName );
@@ -1538,12 +2234,41 @@ component {
                         if ( section == variables.magicApplicationController ) {
                             // treat this (Application.cfc) as a controller:
                             cfc = this;
+<<<<<<< HEAD
                         } else if ( cachedFileExists( cfcFilePath( request.cfcbase ) & subsystemDir & 'controllers/' & section & '.cfc' ) ) {
                             // we call createObject() rather than new so we can control initialization:
                             if ( request.cfcbase == '' ) {
                                 cfc = createObject( 'component', subsystemDot & 'controllers.' & section );
                             } else {
                                 cfc = createObject( 'component', request.cfcbase & '.' & subsystemDot & 'controllers.' & section );
+=======
+                        } else if ( cachedFileExists( cfcFilePath( request.cfcbase ) & subsystemDir & controllersSlash & section & '.cfc' ) ) {
+                            // we call createObject() rather than new so we can control initialization:
+                            if ( request.cfcbase == '' ) {
+                                cfc = createObject( 'component', subsystemDot & controllersDot & section );
+                            } else {
+                                cfc = createObject( 'component', request.cfcbase & '.' & subsystemDot & controllersDot & section );
+                            }
+                            if ( structKeyExists( cfc, 'init' ) ) {
+                                cfc.init( this );
+                            }
+                        } else if ( cachedFileExists( cfcFilePath( request.cfcbase ) & subsystemDir & controllersSlash & section & '.lc' ) ) {
+                            // we call createObject() rather than new so we can control initialization:
+                            if ( request.cfcbase == '' ) {
+                                cfc = createObject( 'component', subsystemDot & controllersDot & section );
+                            } else {
+                                cfc = createObject( 'component', request.cfcbase & '.' & subsystemDot & controllersDot & section );
+                            }
+                            if ( structKeyExists( cfc, 'init' ) ) {
+                                cfc.init( this );
+                            }
+                        } else if ( cachedFileExists( cfcFilePath( request.cfcbase ) & subsystemDir & controllersSlash & section & '.lucee' ) ) {
+                            // we call createObject() rather than new so we can control initialization:
+                            if ( request.cfcbase == '' ) {
+                                cfc = createObject( 'component', subsystemDot & controllersDot & section );
+                            } else {
+                                cfc = createObject( 'component', request.cfcbase & '.' & subsystemDot & controllersDot & section );
+>>>>>>> develop
                             }
                             if ( structKeyExists( cfc, 'init' ) ) {
                                 cfc.init( this );
@@ -1566,14 +2291,30 @@ component {
         }
         // else "return null" effectively
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> develop
     private any function getController( string section, string subsystem = getDefaultSubsystem() ) {
         var _controller_fw1 = getCachedController( subsystem, section );
         if ( !isNull( _controller_fw1 ) ) {
             return _controller_fw1;
         }
     }
+<<<<<<< HEAD
     
+=======
+
+    private struct function getFw1App() {
+        if ( structKeyExists( request._fw1, 'theApp' ) ) {
+            return request._fw1.theApp;
+        } else {
+            return application[variables.framework.applicationKey];
+        }
+    }
+
+>>>>>>> develop
     private string function getNextPreserveKeyAndPurgeOld() {
         var nextPreserveKey = '';
         var oldKeyToPurge = '';
@@ -1601,11 +2342,19 @@ component {
         }
         return nextPreserveKey;
     }
+<<<<<<< HEAD
     
     private string function getPreserveKeySessionKey( string preserveKey ) {
         return '__fw1' & preserveKey;
     }
     
+=======
+
+    private string function getPreserveKeySessionKey( string preserveKey ) {
+        return '__fw1' & preserveKey;
+    }
+
+>>>>>>> develop
     private any function getProperty( struct cfc, string property ) {
         if ( structKeyExists( cfc, 'get#property#' ) ) return evaluate( 'cfc.get#property#()' );
     }
@@ -1615,10 +2364,20 @@ component {
         if ( subsystem eq '' ) {
             return '';
         }
+<<<<<<< HEAD
 
         return subsystem & '/';
     }
     
+=======
+        if ( usingSubsystems() ) {
+            return subsystem & '/';
+        } else {
+            return variables.framework.subsystemsFolder & '/' & subsystem & '/';
+        }
+    }
+
+>>>>>>> develop
     private void function injectFramework( any cfc ) {
         var args = { };
         if ( structKeyExists( cfc, 'setFramework' ) || structKeyExists( cfc, 'onMissingMethod' ) ) {
@@ -1629,8 +2388,13 @@ component {
             evaluate( 'cfc.setFramework( argumentCollection = args )' );
         }
     }
+<<<<<<< HEAD
     
     private void function internalFrameworkTrace( string message, string subsystem = '', string section = '', string item = '' ) {
+=======
+
+    private void function internalFrameworkTrace( string message, string subsystem = '', string section = '', string item = '', string traceType = 'INFO' ) {
+>>>>>>> develop
         if ( request._fw1.doTrace ) {
             try {
                 if ( isDefined( 'session._fw1_trace' ) &&
@@ -1641,7 +2405,11 @@ component {
             } catch ( any _ ) {
                 // ignore if session is not enabled
             }
+<<<<<<< HEAD
             arrayAppend( request._fw1.trace, { tick = getTickCount(), msg = message, sub = subsystem, s = section, i = item } );
+=======
+            arrayAppend( request._fw1.trace, { tick = getTickCount(), msg = message, sub = subsystem, s = section, i = item, t = traceType } );
+>>>>>>> develop
         }
     }
 
@@ -1652,17 +2420,24 @@ component {
         if ( structKeyExists( rc, '$' ) ) {
             $ = rc.$;
         }
+<<<<<<< HEAD
         if ( !structKeyExists( request._fw1, 'controllerExecutionComplete' ) ) {
             raiseException( type='FW1.layoutExecutionFromController', message='Invalid to call the layout method at this point.',
                 detail='The layout method should not be called prior to the completion of the controller execution phase.' );
         }
+=======
+>>>>>>> develop
         var response = '';
         savecontent variable="response" {
             include '#layoutPath#';
         }
         return response;
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> develop
     private string function internalView( string viewPath, struct args = { } ) {
         var rc = request.context;
         var $ = { };
@@ -1677,6 +2452,7 @@ component {
         }
         return response;
     }
+<<<<<<< HEAD
     
     private boolean function isFrameworkInitialized() {
         return structKeyExists( variables, 'framework' ) &&
@@ -1688,12 +2464,20 @@ component {
                     structKeyExists( URL, variables.framework.reload ) &&
                     URL[ variables.framework.reload ] == variables.framework.password ) ||
                 variables.framework.reloadApplicationOnEveryRequest;
+=======
+
+    private boolean function isFrameworkInitialized() {
+        return structKeyExists( variables, 'framework' ) &&
+            ( structKeyExists( request._fw1, 'theApp' ) ||
+              structKeyExists( application, variables.framework.applicationKey ) );
+>>>>>>> develop
     }
 
     private boolean function isSubsystemInitialized( string subsystem ) {
 
         ensureNewFrameworkStructsExist();
 
+<<<<<<< HEAD
         return structKeyExists( application[ variables.framework.applicationKey ].subsystems, subsystem );
 
     }
@@ -1717,6 +2501,89 @@ component {
     
     private struct function processRouteMatch( string route, string target, string path, string httpMethod ) {
         var regExCache = isFrameworkInitialized() ? application[ variables.framework.applicationKey ].cache.routes.regex : { };
+=======
+        return structKeyExists( getFw1App().subsystems, subsystem );
+
+    }
+
+    // like listFirst() and listLast() but they actually work with empty segments
+    private string function segmentFirst( string segments, string delimiter ) {
+        var where = find( delimiter, segments );
+        if ( where ) {
+            if ( where == 1 ) {
+                return '';
+            } else {
+                return left( segments, where - 1 );
+            }
+        }
+        return '';
+    }
+
+    private string function normalizeQueryString( any queryString ) {
+        // if queryString is a struct, massage it into a string
+        if ( isStruct( queryString ) && structCount( queryString ) ) {
+            var q = '';
+            for( var key in queryString ) {
+                if ( isSimpleValue( queryString[key] ) ) {
+                    q &= urlEncodedFormat( key ) & '=' & urlEncodedFormat( queryString[ key ] ) & '&';
+                }
+            }
+            queryString = q;
+        }
+        else if ( !isSimpleValue( queryString ) ) {
+            queryString = '';
+        }
+        return queryString;
+    }
+
+    private string function segmentLast( string segments, string delimiter ) {
+        var where = find( delimiter, segments );
+        if ( where ) {
+            if ( where == len( segments ) ) {
+                return '';
+            } else {
+                return right( segments, len( segments ) - where );
+            }
+        }
+        return segments;
+    }
+
+    private string function parseViewOrLayoutPath( string path, string type ) {
+        var folder = type;
+        switch ( folder ) {
+        case 'layout':
+            folder = variables.layoutFolder;
+            break;
+        case 'view':
+            folder = variables.viewFolder;
+            break;
+            // else leave it alone?
+        }
+        var pathInfo = { };
+        var subsystem = getSubsystem( getSubsystemSectionAndItem( path ) );
+
+        // allow for :section/action to simplify logic in setupRequestWrapper():
+        pathInfo.path = segmentLast( path, variables.framework.subsystemDelimiter );
+        pathInfo.base = request.base;
+        pathInfo.subsystem = subsystem;
+        if ( usingSubsystems() || len( subsystem ) ) {
+            pathInfo.base = pathInfo.base & getSubsystemDirPrefix( subsystem );
+        }
+        var defaultPath = pathInfo.base & folder & 's/' & pathInfo.path & '.cfm';
+        if ( !cachedFileExists( defaultPath ) )
+            defaultPath = pathInfo.base & folder & 's/' & pathInfo.path & '.lucee';
+        if ( !cachedFileExists( defaultPath ) )
+            defaultPath = pathInfo.base & folder & 's/' & pathInfo.path & '.lc';
+        if ( !cachedFileExists( defaultPath ) )
+            // can't find it so assume .cfm default value
+            defaultPath = pathInfo.base & folder & 's/' & pathInfo.path & '.cfm';
+        return customizeViewOrLayoutPath( pathInfo, type, defaultPath );
+
+    }
+
+    private struct function processRouteMatch( string route, string target, string path, string httpMethod ) {
+        var regExCache = isFrameworkInitialized() ? getFw1App().cache.routes.regex : { };
+>>>>>>> develop
         var cacheKey = hash( route & target );
         if ( !structKeyExists( regExCache, cacheKey ) ) {
             var routeRegEx = { redirect = false, method = '', pattern = route, target = target };
@@ -1732,8 +2599,19 @@ component {
             if ( routeLen ) {
                 if ( left( routeRegEx.pattern, 1 ) == '$' ) {
                     // check HTTP method
+<<<<<<< HEAD
                     routeRegEx.method = listFirst( routeRegEx.pattern, '*/' );
                     var methodLen = len( routeRegEx.method );
+=======
+                    var methodLen = 0;
+                    if ( routeLen >= 2 && left( routeRegEx.pattern, 2 ) == '$*' ) {
+                        // accept all methods so don't set method but...
+                        methodLen = 2; // ...consume 2 characters
+                    } else {
+                        routeRegEx.method = listFirst( routeRegEx.pattern, '*/^' );
+                        methodLen = len( routeRegEx.method );
+                    }
+>>>>>>> develop
                     if ( routeLen == methodLen ) {
                         routeRegEx.pattern = '*';
                     } else {
@@ -1752,12 +2630,32 @@ component {
             if ( !len( routeRegEx.target ) || right( routeRegEx.target, 1) != '/' ) routeRegEx.target &= '/';
             // walk for self defined (regex) and :var -  replace :var with ([^/]*) in route and back reference in target:
             var n = 1;
+<<<<<<< HEAD
             var placeholders = rematch( '(:[^/]+)|(\([^\)]+)', routeRegEx.pattern );
             for ( var placeholder in placeholders ) {
                 if ( left( placeholder, 1 ) == ':') {
                     routeRegEx.pattern = replace( routeRegEx.pattern, placeholder, '([^/]*)' );
                     routeRegEx.target = replace( routeRegEx.target, placeholder, chr(92) & n );
                 }
+=======
+            var placeholders = rematch( '(\{[-_a-zA-Z0-9]+:[^\}]*\})|(:[-_a-zA-Z0-9]+)|(\([^\)]+)', routeRegEx.pattern );
+            for ( var placeholder in placeholders ) {
+                var placeholderFirstChar = left( placeholder, 1 );
+                if ( placeholderFirstChar == ':') {
+                    routeRegEx.pattern = replace( routeRegEx.pattern, placeholder, '([^/]*)' );
+                    routeRegEx.target = replace( routeRegEx.target, placeholder, chr(92) & n );
+                }
+                else if ( placeholderFirstChar == '{') {
+                    var findPlaceholderSpecificRegex = refind("\{([^:]*):([^\}]*)\}", placeholder, 1, true);
+                    var placeholderSpecificRegexFound = arrayLen(findPlaceholderSpecificRegex.pos) gte 3;
+                    if( placeholderSpecificRegexFound ){
+                        var placeholderName = mid( placeholder, findPlaceholderSpecificRegex.pos[2], findPlaceholderSpecificRegex.len[2] );
+                        var placeholderSpecificRegex = mid( placeholder, findPlaceholderSpecificRegex.pos[3], findPlaceholderSpecificRegex.len[3] );
+                        routeRegEx.pattern = replace( routeRegEx.pattern, placeholder, "(#placeholderSpecificRegex#)" );
+                        routeRegEx.target = replace( routeRegEx.target, ":" & placeholderName, chr(92) & n );
+                    }
+                }
+>>>>>>> develop
                 ++n;
             }
             // add trailing match/back reference: if last character is not "$" to respect regex end of string
@@ -1770,18 +2668,54 @@ component {
         var routeMatch = { matched = false };
         structAppend( routeMatch, regExCache[ cacheKey ] );
         if ( !len( path ) || right( path, 1) != '/' ) path &= '/';
+<<<<<<< HEAD
         var matched = len( routeMatch.method ) ? ( '$' & httpMethod == routeMatch.method ) : true;
         if ( matched && reFind( routeMatch.pattern, path ) ) {
             routeMatch.matched = true;
             routeMatch.route = route;
             routeMatch.path = path;
+=======
+        if ( routeRegexFind( routeMatch.pattern, path ) ) {
+            if ( len( routeMatch.method ) > 1 ) {
+                if ( '$' & httpMethod == routeMatch.method ) {
+                    routeMatch.matched = true;
+                } else if ( variables.framework.preflightOptions ) {
+                    // it matched apart from the method so record this
+                    request._fw1.routeMethodsMatched[ right( routeMatch.method, len( routeMatch.method ) - 1 ) ] = true;
+                }
+            } else if ( variables.framework.preflightOptions && httpMethod == "OPTIONS" ) {
+                // it would have matched but we should special case OPTIONS
+                request._fw1.routeMethodsMatched.get = true;
+                request._fw1.routeMethodsMatched.post = true;
+            } else {
+                routeMatch.matched = true;
+            }
+            if ( routeMatch.matched ) {
+                routeMatch.route = route;
+                routeMatch.path = path;
+            }
+>>>>>>> develop
         }
         return routeMatch;
     }
 
+<<<<<<< HEAD
     private array function getResourceRoutes( any resourcesToRoute, string subsystem = '', string pathRoot = '', string targetAppend = '' ) {
         var resourceCache = isFrameworkInitialized() ? application[ variables.framework.applicationKey ].cache.routes.resources : { };
         var cacheKey = hash( serializeJSON( resourcesToRoute ) );
+=======
+    private numeric function routeRegexFind( string pattern, string path ) {
+        if ( variables.framework.routesCaseSensitive ) {
+            return reFind( pattern, path );
+        } else {
+            return REFindNoCase( pattern, path );
+        }
+    }
+
+    private array function getResourceRoutes( any resourcesToRoute, string subsystem = '', string pathRoot = '', string targetAppend = '' ) {
+        var resourceCache = isFrameworkInitialized() ? getFw1App().cache.routes.resources : { };
+        var cacheKey = hash( serializeJSON( { rtr = resourcesToRoute, ss = subsystem, pr = pathRoot, ta = targetAppend } ) );
+>>>>>>> develop
         if ( !structKeyExists( resourceCache, cacheKey ) ) {
             // get passed in resourcesToRoute (string,array,struct) to match following struct
             var resources = { resources = [ ], subsystem = subsystem, pathRoot = pathRoot, methods = [ ], nested = [ ] };
@@ -1817,7 +2751,11 @@ component {
                         var target = '/#subsystemResourceTarget#/#routeTemplate.method#';
                         if ( structKeyExists( routeTemplate, 'includeId' ) && routeTemplate.includeId ) target &= '/id/:id';
                         if ( structKeyExists( routeTemplate, 'targetSuffix' ) ) target &= routeTemplate.targetSuffix;
+<<<<<<< HEAD
                         target &= targetAppend; 
+=======
+                        target &= targetAppend;
+>>>>>>> develop
                         routePack[ route ] = target;
                     }
                     arrayAppend( routes, routePack );
@@ -1836,6 +2774,7 @@ component {
         return resourceCache[ cacheKey ];
     }
 
+<<<<<<< HEAD
     private void function raiseException( string type, string message, string detail ) {
         throw( type = type, message = message, detail = detail );
     }
@@ -1880,12 +2819,117 @@ component {
         getPageContext().getResponse().setStatus( statusCode );
         // set the content type header portably:
         getPageContext().getResponse().setContentType( contentType );
+=======
+    private any function read_json( string json ) {
+        return deserializeJSON( json );
+    }
+
+    private struct function render_json( struct renderData ) {
+        return {
+            contentType = 'application/json; charset=utf-8',
+            output = serializeJSON( renderData.data )
+        };
+    }
+
+    private struct function render_jsonp( struct renderData ) {
+        if ( !structKeyExists( renderData, 'jsonpCallback' ) || !len( renderData.jsonpCallback ) ){
+            throw( type = 'FW1.jsonpCallbackRequired',
+                   message = 'Callback was not defined',
+                   detail = 'renderData() called with jsonp type requires a jsonpCallback' );
+        }
+        return {
+            contentType = 'application/javascript; charset=utf-8',
+            output = renderData.jsonpCallback & "(" & serializeJSON( renderData.data ) & ");"
+        };
+    }
+
+    private struct function render_rawjson( struct renderData ) {
+        return {
+            contentType = 'application/json; charset=utf-8',
+            output = renderData.data
+        };
+    }
+
+    private struct function render_html( struct renderData ) {
+        structDelete( request._fw1, 'renderData' );
+        return {
+            contentType = 'text/html; charset=utf-8',
+            output = renderData.data
+        };
+    }
+
+    private struct function render_xml( struct renderData ) {
+        var output = '';
+        if ( isXML( renderData.data ) ) {
+            if ( isSimpleValue( renderData.data ) ) {
+                // XML as string already
+                output = renderData.data;
+            } else {
+                // XML object
+                output = toString( renderData.data );
+            }
+        } else {
+            throw( type = 'FW1.UnsupportXMLRender',
+                   message = 'Data is not XML',
+                   detail = 'renderData() called with XML type but unrecognized data format' );
+        }
+        return {
+            contentType = 'text/xml; charset=utf-8',
+            output = output
+        };
+    }
+
+    private struct function render_text( struct renderData ) {
+        return {
+            contentType = 'text/plain; charset=utf-8',
+            output = renderData.data
+        };
+    }
+
+    private struct function renderDataWithContentType() {
+        var out = { };
+        var renderType = request._fw1.renderData.type;
+        var statusCode = request._fw1.renderData.statusCode;
+        var statusText = request._fw1.renderData.statusText;
+        var headers = structKeyExists( request._fw1.renderData, 'headers' ) ?
+            request._fw1.renderData.headers : [ ];
+        if ( isSimpleValue( renderType ) ) {
+            var fn_type = 'render_' & renderType;
+            if ( structKeyExists( variables, fn_type ) ) {
+                renderType = variables[ fn_type ];
+                // evaluate with no FW/1 context!
+                out = renderType( request._fw1.renderData );
+            } else {
+                throw( type = 'FW1.UnsupportedRenderType',
+                       message = 'Only HTML, JSON, JSONP, RAWJSON, XML, and TEXT are supported',
+                       detail = 'renderData() called with unknown type: ' & renderType );
+            }
+        } else {
+            // assume it is a function
+            out = renderType( request._fw1.renderData );
+        }
+        var resp = getPageContext().getResponse();
+        for ( var h in headers ) {
+            resp.setHeader( h.name, h.value );
+        }
+        // in theory, we should use sendError() instead of setStatus() but some
+        // Servlet containers interpret that to mean "Send my error page" instead
+        // of just sending the response you actually want!
+        if ( len( statusText ) ) {
+            resp.setStatus( statusCode, statusText );
+        } else {
+            resp.setStatus( statusCode );
+        }
+>>>>>>> develop
         return out;
     }
 
     private struct function resolveBaseURL( string action = '.', string path = variables.magicBaseURL ) {
         if ( path == variables.magicBaseURL ) path = getBaseURL();
+<<<<<<< HEAD
         var omitIndex = false;
+=======
+>>>>>>> develop
         if ( path == 'useSubsystemConfig' ) {
             var subsystemConfig = getSubsystemConfig( getSubsystem( action ) );
             if ( structKeyExists( subsystemConfig, 'baseURL' ) ) {
@@ -1894,6 +2938,7 @@ component {
                 path = getBaseURL();
             }
         }
+<<<<<<< HEAD
         if ( path == 'useCgiScriptName' ) {
             path = request._fw1.cgiScriptName;
             if ( variables.framework.SESOmitIndex ) {
@@ -1902,6 +2947,18 @@ component {
             }
         } else if ( path == 'useRequestURI' ) {
             path = getPageContext().getRequest().getRequestURI();
+=======
+        var omitIndex = false;
+        var optionalOmit = false;
+        if ( path == 'useCgiScriptName' ) {
+            path = getContextRoot() & request._fw1.cgiScriptName;
+            optionalOmit = true;
+        } else if ( path == 'useRequestURI' ) {
+            path = getPageContext().getRequest().getRequestURI();
+            optionalOmit = true;
+        }
+        if ( optionalOmit ) {
+>>>>>>> develop
             if ( variables.framework.SESOmitIndex ) {
                 path = getDirectoryFromPath( path );
                 omitIndex = true;
@@ -1925,10 +2982,17 @@ component {
                 structAppend( request.context, session[ preserveKeySessionKey ], false );
                 if ( variables.framework.maxNumContextsPreserved == 1 ) {
                     /*
+<<<<<<< HEAD
                         When multiple contexts are preserved, the oldest context is purged
                         within getNextPreserveKeyAndPurgeOld once the maximum is reached.
                         This allows for a browser refresh after the redirect to still receive
                         the same context.
+=======
+                      When multiple contexts are preserved, the oldest context is purged
+                      within getNextPreserveKeyAndPurgeOld once the maximum is reached.
+                      This allows for a browser refresh after the redirect to still receive
+                      the same context.
+>>>>>>> develop
                     */
                     structDelete( session, preserveKeySessionKey );
                 }
@@ -1937,7 +3001,11 @@ component {
             // session scope not enabled, do nothing
         }
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> develop
     private string function saveFlashContext( string keys ) {
         var curPreserveKey = getNextPreserveKeyAndPurgeOld();
         var preserveKeySessionKey = getPreserveKeySessionKey( curPreserveKey );
@@ -1952,11 +3020,20 @@ component {
                     key = trim( key );
                     if ( structKeyExists( request.context, key ) ) {
                         session[ preserveKeySessionKey ][ key ] = request.context[ key ];
+<<<<<<< HEAD
+=======
+                    } else {
+                        internalFrameworkTrace( message = 'key "#key#" does not exist in RC, cannot preserve.', traceType = 'WARNING' );
+>>>>>>> develop
                     }
                 }
             }
         } catch ( any ex ) {
             // session scope not enabled, do nothing
+<<<<<<< HEAD
+=======
+            internalFrameworkTrace( message = 'sessionManagement not enabled, cannot preserve RC keys.', traceType = 'WARNING' );
+>>>>>>> develop
         }
         return curPreserveKey;
     }
@@ -1970,7 +3047,11 @@ component {
         }
         request.failedMethod = method;
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> develop
     private void function setProperty( struct cfc, string property, struct args ) {
         if ( listLen( property, '.' ) > 1 ) {
             var firstObjName = listFirst( property, '.' );
@@ -1987,6 +3068,7 @@ component {
             evaluate( 'cfc.set#property#( argumentCollection = args )' );
         }
     }
+<<<<<<< HEAD
     
     private void function setupApplicationWrapper() {
         /*
@@ -2019,6 +3101,25 @@ component {
         }
 
         switch ( variables.framework.diEngine ) {
+=======
+
+    private void function setupApplicationWrapper() {
+        if ( structKeyExists( request._fw1, "appWrapped" ) ) return;
+        request._fw1.appWrapped = true;
+        request._fw1.theApp = {
+            cache = {
+                lastReload = now(),
+                fileExists = { },
+                controllers = { },
+                routes = { regex = { }, resources = { } }
+            },
+            subsystems = { },
+            subsystemFactories = { }
+        };
+
+        switch ( variables.framework.diEngine ) {
+        case "aop1":
+>>>>>>> develop
         case "di1":
             var ioc = new "#variables.framework.diComponent#"(
                 variables.framework.diLocations,
@@ -2028,12 +3129,32 @@ component {
             setBeanFactory( ioc );
             break;
         case "wirebox":
+<<<<<<< HEAD
             var wb = new "#variables.framework.diComponent#"(
                 properties = variables.framework.diConfig
             );
             wb.getBinder().scanLocations( variables.framework.diLocations );
             // we do not provide fw alias for controller constructor here!
             setBeanFactory( wb );
+=======
+            if ( isSimpleValue( variables.framework.diConfig ) ) {
+                // per #363 assume name of binder CFC
+                var wb1 = new "#variables.framework.diComponent#"(
+                    variables.framework.diConfig, // binder path
+                    variables.framework // properties struct
+                );
+                // we do not provide fw alias for controller constructor here!
+                setBeanFactory( wb1 );
+            } else {
+                // legacy configuration
+                var wb2 = new "#variables.framework.diComponent#"(
+                    properties = variables.framework.diConfig
+                );
+                wb2.getBinder().scanLocations( variables.framework.diLocations );
+                // we do not provide fw alias for controller constructor here!
+                setBeanFactory( wb2 );
+            }
+>>>>>>> develop
             break;
         case "custom":
             var ioc = new "#variables.framework.diComponent#"(
@@ -2043,6 +3164,7 @@ component {
             setBeanFactory( ioc );
             break;
         }
+<<<<<<< HEAD
         
         // this will recreate the main bean factory on a reload:
         internalFrameworkTrace( 'setupApplication() called' );
@@ -2067,6 +3189,18 @@ component {
     
     private void function setupFrameworkDefaults() {
 
+=======
+
+        // this will recreate the main bean factory on a reload:
+        internalFrameworkTrace( 'setupApplication() called' );
+        setupApplication();
+        application[variables.framework.applicationKey] = request._fw1.theApp;
+
+    }
+
+    private void function setupFrameworkDefaults() {
+        if ( structKeyExists( variables, "_fw1_defaults_initialized" ) ) return;
+>>>>>>> develop
         // default values for Application::variables.framework structure:
         if ( !structKeyExists(variables, 'framework') ) {
             variables.framework = { };
@@ -2091,6 +3225,7 @@ component {
             }
         }
         if ( !structKeyExists(variables.framework, 'usingSubsystems') ) {
+<<<<<<< HEAD
             variables.framework.usingSubsystems =
                 structKeyExists(variables.framework,'defaultSubsystem') ||
                 structKeyExists(variables.framework,'sitewideLayoutSubsystem') ||
@@ -2099,6 +3234,13 @@ component {
         }
         if ( !structKeyExists(variables.framework, 'defaultSubsystem') ) {
             variables.framework.defaultSubsystem = 'home';
+=======
+            variables.framework.usingSubsystems = structKeyExists( variables.framework, 'defaultSubsystem' ) ||
+                structKeyExists( variables.framework, 'siteWideLayoutSubsystem' );
+        }
+        if ( !structKeyExists(variables.framework, 'defaultSubsystem') ) {
+            variables.framework.defaultSubsystem = variables.framework.usingSubsystems ? 'home' : '';
+>>>>>>> develop
         }
         if ( !structKeyExists(variables.framework, 'defaultSection') ) {
             variables.framework.defaultSection = 'main';
@@ -2116,6 +3258,7 @@ component {
             variables.framework.subsystems = { };
         }
         if ( structKeyExists(variables.framework, 'home') ) {
+<<<<<<< HEAD
             if (usingSubsystems()) {
                 if ( !find( variables.framework.subsystemDelimiter, variables.framework.home ) ) {
                     raiseException( type = "FW1.configuration.home", message = "You are using subsystems but framework.home does not specify a subsystem.", detail = "You should set framework.home to #variables.framework.defaultSubsystem##variables.framework.subsystemDelimiter##variables.framework.home#" );
@@ -2133,6 +3276,23 @@ component {
                 variables.framework.error = variables.framework.defaultSubsystem & variables.framework.subsystemDelimiter & variables.framework.defaultSection & '.error';
             } else {
                 variables.framework.error = variables.framework.defaultSection & '.error';
+=======
+            if ( usingSubsystems() ) {
+                if ( !find( variables.framework.subsystemDelimiter, variables.framework.home ) ) {
+                    throw( type = "FW1.configuration.home", message = "You are using subsystems but framework.home does not specify a subsystem.", detail = "You should set framework.home to #variables.framework.defaultSubsystem##variables.framework.subsystemDelimiter##variables.framework.home#" );
+                }
+            }
+        } else {
+            variables.framework.home = variables.framework.subsystemDelimiter & variables.framework.defaultSection & '.' & variables.framework.defaultItem;
+            if ( usingSubsystems() ) {
+                variables.framework.home = variables.framework.defaultSubsystem & variables.framework.home;
+            }
+        }
+        if ( !structKeyExists(variables.framework, 'error') ) {
+            variables.framework.error = variables.framework.subsystemDelimiter & variables.framework.defaultSection & '.error';
+            if ( usingSubsystems() ) {
+                variables.framework.error = variables.framework.defaultSubsystem & variables.framework.error;
+>>>>>>> develop
             }
         }
         if ( !structKeyExists(variables.framework, 'reload') ) {
@@ -2161,7 +3321,12 @@ component {
         }
         // NOTE: unhandledExtensions is a list of file extensions that are not handled by FW/1
         if ( !structKeyExists(variables.framework, 'unhandledExtensions') ) {
+<<<<<<< HEAD
             variables.framework.unhandledExtensions = 'cfc';
+=======
+            // NOTE: this prevents index.lc or index.lucee from working!!
+            variables.framework.unhandledExtensions = 'cfc,lc,lucee';
+>>>>>>> develop
         }
         // NOTE: you can provide a comma delimited list of paths.  Since comma is the delim, it can not be part of your path URL to exclude
         if ( structKeyExists(variables.framework, 'unhandledPaths') ) {
@@ -2176,7 +3341,11 @@ component {
         } else {
             variables.framework.unhandledPaths = '/flex2gateway';
             variables.framework.unhandledPathRegex = '/flex2gateway';
+<<<<<<< HEAD
         }               
+=======
+        }
+>>>>>>> develop
         if ( !structKeyExists( variables.framework, 'unhandledErrorCaught' ) ) {
             variables.framework.unhandledErrorCaught = false;
         }
@@ -2189,6 +3358,12 @@ component {
         if ( !structKeyExists( variables.framework, 'routes' ) ) {
             variables.framework.routes = [ ];
         }
+<<<<<<< HEAD
+=======
+        if ( !structKeyExists( variables.framework, 'perResourceError' ) ) {
+            variables.framework.perResourceError = true;
+        }
+>>>>>>> develop
         if ( !structKeyExists( variables.framework, 'resourceRouteTemplates' ) ) {
             variables.framework.resourceRouteTemplates = [
                 { method = 'default', httpMethods = [ '$GET' ] },
@@ -2198,6 +3373,15 @@ component {
                 { method = 'update', httpMethods = [ '$PUT','$PATCH' ], includeId = true },
                 { method = 'destroy', httpMethods = [ '$DELETE' ], includeId = true }
             ];
+<<<<<<< HEAD
+=======
+            if ( variables.framework.perResourceError ) {
+                arrayAppend( variables.framework.resourceRouteTemplates, { method = 'error', httpMethods = [ '$*' ] } );
+            }
+        }
+        if ( !structKeyExists( variables.framework, 'routesCaseSensitive' ) ) {
+            variables.framework.routesCaseSensitive = true;
+>>>>>>> develop
         }
         if ( !structKeyExists( variables.framework, 'noLowerCase' ) ) {
             variables.framework.noLowerCase = false;
@@ -2205,11 +3389,53 @@ component {
         if ( !structKeyExists( variables.framework, 'trace' ) ) {
             variables.framework.trace = false;
         }
+<<<<<<< HEAD
+=======
+        if ( !structKeyExists( variables.framework, 'controllersFolder' ) ) {
+            variables.framework.controllersFolder = 'controllers';
+        }
+        if ( right( variables.framework.controllersFolder, 1 ) != 's' ) {
+            throw( type = "FW1.IllegalConfiguration",
+                   message = "ControllersFolder must be a plural word (ends in 's')." );
+        }
+        variables.controllerFolder = left( variables.framework.controllersFolder, len( variables.framework.controllersFolder ) - 1 );
+        if ( !structKeyExists( variables.framework, 'layoutsFolder' ) ) {
+            variables.framework.layoutsFolder = 'layouts';
+        }
+        if ( right( variables.framework.layoutsFolder, 1 ) != 's' ) {
+            throw( type = "FW1.IllegalConfiguration",
+                   message = "LayoutsFolder must be a plural word (ends in 's')." );
+        }
+        variables.layoutFolder = left( variables.framework.layoutsFolder, len( variables.framework.layoutsFolder ) - 1 );
+        if ( !structKeyExists( variables.framework, 'subsystemsFolder' ) ) {
+            variables.framework.subsystemsFolder = 'subsystems';
+        }
+        if ( right( variables.framework.subsystemsFolder, 1 ) != 's' ) {
+            throw( type = "FW1.IllegalConfiguration",
+                   message = "SubsystemsFolder must be a plural word (ends in 's')." );
+        }
+        variables.subsystemFolder = left( variables.framework.subsystemsFolder, len( variables.framework.subsystemsFolder ) - 1 );
+        if ( !structKeyExists( variables.framework, 'viewsFolder' ) ) {
+            variables.framework.viewsFolder = 'views';
+        }
+        if ( right( variables.framework.viewsFolder, 1 ) != 's' ) {
+            throw( type = "FW1.IllegalConfiguration",
+                   message = "ViewsFolder must be a plural word (ends in 's')." );
+        }
+        variables.viewFolder = left( variables.framework.viewsFolder, len( variables.framework.viewsFolder ) - 1 );
+        if ( !structKeyExists( variables.framework, 'diOverrideAllowed' ) ) {
+            variables.framework.diOverrideAllowed = false;
+        }
+>>>>>>> develop
         if ( !structKeyExists( variables.framework, 'diEngine' ) ) {
             variables.framework.diEngine = 'di1';
         }
         if ( !structKeyExists( variables.framework, 'diLocations' ) ) {
+<<<<<<< HEAD
             variables.framework.diLocations = 'model,controllers';
+=======
+            variables.framework.diLocations = 'model,' & variables.framework.controllersFolder;
+>>>>>>> develop
         }
         if ( !structKeyExists( variables.framework, 'diConfig' ) ) {
             variables.framework.diConfig = { };
@@ -2217,6 +3443,7 @@ component {
         if ( !structKeyExists( variables.framework, 'diComponent' ) ) {
             var diComponent = 'framework.ioc';
             switch ( variables.framework.diEngine ) {
+<<<<<<< HEAD
                 case 'wirebox':
                     diComponent = 'framework.WireBoxAdapter';
                     break;
@@ -2234,6 +3461,51 @@ component {
         request._fw1.doTrace = variables.framework.trace;
         // add this as a fingerprint so autowire can detect FW/1 CFC:
         this.__fw1_version = variables.framework.version;
+=======
+            case 'aop1':
+                diComponent = 'framework.aop';
+                break;
+            case 'wirebox':
+                diComponent = 'framework.WireBoxAdapter';
+                break;
+            case 'custom':
+                throw( type="FW1.IllegalConfiguration",
+                       message="If you specify diEngine='custom' you must specify a component path for diComponent." );
+                break;
+            default:
+                // assume DI/1
+                break;
+            }
+            variables.framework.diComponent = diComponent;
+        }
+        if ( structKeyExists( variables.framework, 'enableJSONPOST' ) ) {
+            throw( type="FW1.IllegalConfiguration",
+                   message="The enableJSONPOST setting has been renamed to decodeRequestBody." );
+        }
+        if ( !structKeyExists( variables.framework, 'decodeRequestBody' ) ) {
+            variables.framework.decodeRequestBody = false;
+        }
+        if ( !structKeyExists( variables.framework, 'preflightOptions' ) ) {
+            variables.framework.preflightOptions = false;
+        }
+        if ( !structKeyExists( variables.framework, 'optionsAccessControl' ) ) {
+            variables.framework.optionsAccessControl = { };
+        }
+        setupEnvironment( env );
+        if ( variables.framework.preflightOptions ) {
+            var defaultAccessControl = {
+                origin = "*",
+                headers = "Accept,Authorization,Content-Type",
+                credentials = true,
+                maxAge = 1728000
+            };
+            structAppend( variables.framework.optionsAccessControl, defaultAccessControl, false );
+        }
+        request._fw1.doTrace = variables.framework.trace;
+        // add this as a fingerprint so autowire can detect FW/1 CFC:
+        this.__fw1_version = variables.framework.version;
+        variables._fw1_defaults_initialized = true;
+>>>>>>> develop
     }
 
     private string function setupFrameworkEnvironments() {
@@ -2242,16 +3514,71 @@ component {
             var envs = variables.framework.environments;
             var tier = listFirst( env, '-' );
             if ( structKeyExists( envs, tier ) ) {
+<<<<<<< HEAD
                 structAppend( variables.framework, envs[ tier ] );
             }
             if ( structKeyExists( envs, env ) ) {
                 structAppend( variables.framework, envs[ env ] );
+=======
+                mergeConfig( variables.framework, envs[ tier ] );
+            }
+            if ( env != tier && structKeyExists( envs, env ) ) {
+                mergeConfig( variables.framework, envs[ env ] );
+>>>>>>> develop
             }
         }
         return env;
     }
 
+<<<<<<< HEAD
     private void function setupRequestDefaults() {
+=======
+    private void function mergeConfig( struct target, struct source ) {
+        // subsystems and diConfig should be merged
+        var subsystems = structKeyExists( target, 'subsystems' ) ? structCopy( target.subsystems ) : { };
+        var diConfig = structKeyExists( target, 'diConfig' ) ? structCopy( target.diConfig ) : { };
+        // and diConfig has constants, singulars as sub-structs
+        var constants = structKeyExists( diConfig, 'constants' ) ? structCopy( diConfig.constants ) : { };
+        var singulars = structKeyExists( diConfig, 'singulars' ) ? structCopy( diConfig.singulars ) : { };
+        // and diConfig has exclude, transients as sub-arrays
+        var exclude = [ ];
+        if ( structKeyExists( diConfig, 'exclude' ) )
+            for ( var ei in diConfig.exclude )
+                arrayAppend( exclude, ei );
+        var transients = [ ];
+        if ( structKeyExists( diConfig, 'transients' ) )
+            for ( var ti in diConfig.transients )
+                arrayAppend( transients, ti );
+        // subsystems might have its own diConfig but that's too complex to address right now
+
+        // merge top-level config destructively
+        structAppend( target, source );
+
+        // re-merge subsystems keys non-destructively
+        if ( structKeyExists( source, 'subsystems' ) ) {
+            structAppend( target.subsystems, subsystems, false );
+        }
+        // re-merge diConfig keys non-destructively and recurse in
+        if ( structKeyExists( source, 'diConfig' ) ) {
+            structAppend( target.diConfig, diConfig, false );
+            if ( structKeyExists( source.diConfig, 'constants' ) ) {
+                structAppend( target.diConfig.constants, constants, false );
+            }
+            if ( structKeyExists( source.diConfig, 'singulars' ) ) {
+                structAppend( target.diConfig.singulars, singulars, false );
+            }
+            if ( structKeyExists( source.diConfig, 'exclude' ) ) {
+                for ( ei in exclude ) arrayAppend( target.diConfig.exclude, ei );
+            }
+            if ( structKeyExists( source.diConfig, 'transients' ) ) {
+                for ( ti in transients ) arrayAppend( target.diConfig.transients, ti );
+            }
+        }
+    }
+
+    private void function setupRequestDefaults() {
+        setupFrameworkDefaults();
+>>>>>>> develop
         if ( !request._fw1.requestDefaultsInitialized ) {
             var pathInfo = request._fw1.cgiPathInfo;
             request.base = variables.framework.base;
@@ -2268,19 +3595,44 @@ component {
                 // pathInfo is bogus so ignore it:
                 pathInfo = '';
             }
+<<<<<<< HEAD
+=======
+            request._fw1.currentRoute = '';
+>>>>>>> develop
             var routes = getRoutes();
             if ( arrayLen( routes ) ) {
                 internalFrameworkTrace( 'processRoutes() called' );
                 var routeMatch = processRoutes( pathInfo, routes );
                 if ( routeMatch.matched ) {
                     internalFrameworkTrace( 'route matched - #routeMatch.route# - #pathInfo#' );
+<<<<<<< HEAD
                     pathInfo = rereplace( routeMatch.path, routeMatch.pattern, routeMatch.target );
                     if ( routeMatch.redirect ) {
                         location( pathInfo, false, routeMatch.statusCode ); 
+=======
+                    var routeTail = '';
+                    if ( variables.framework.routesCaseSensitive ) {
+                        pathInfo = rereplace( routeMatch.path, routeMatch.pattern, routeMatch.target );
+                        routeTail = rereplace( routeMatch.path, routeMatch.pattern, '' );
+                    } else {
+                        pathInfo = rereplacenocase( routeMatch.path, routeMatch.pattern, routeMatch.target );
+                        routeTail = rereplacenocase( routeMatch.path, routeMatch.pattern, '' );
+                    }
+                    request._fw1.currentRoute = left( routeMatch.path, len( routeMatch.path ) - len( routeTail ) );
+                    if ( routeMatch.redirect ) {
+                        location( pathInfo, false, routeMatch.statusCode );
+>>>>>>> develop
                     } else {
                         request._fw1.route = routeMatch.route;
                     }
                 }
+<<<<<<< HEAD
+=======
+            } else if ( variables.framework.preflightOptions && request._fw1.cgiRequestMethod == "OPTIONS" ) {
+                // non-route matching but we have OPTIONS support enabled
+                request._fw1.routeMethodsMatched.get = true;
+                request._fw1.routeMethodsMatched.post = true;
+>>>>>>> develop
             }
             try {
                 // we use .split() to handle empty items in pathInfo - we fallback to listToArray() on
@@ -2298,6 +3650,16 @@ component {
                 pathInfo = listToArray( pathInfo, '/' );
             }
             var sesN = arrayLen( pathInfo );
+<<<<<<< HEAD
+=======
+            if ( !len( request._fw1.currentRoute ) ) {
+                switch ( sesN ) {
+                case 0 : request._fw1.currentRoute = '/'; break;
+                case 1 : request._fw1.currentRoute = '/' & pathInfo[1] & '/'; break;
+                default: request._fw1.currentRoute = '/' & pathInfo[1] & '/' & pathInfo[2] & '/'; break;
+                }
+            }
+>>>>>>> develop
             if ( ( sesN > 0 || variables.framework.generateSES ) && getBaseURL() != 'useRequestURI' ) {
                 request._fw1.generateSES = true;
             }
@@ -2313,6 +3675,7 @@ component {
                 }
             }
             // certain remote calls do not have URL or form scope:
+<<<<<<< HEAD
             if ( isDefined('URL') ) structAppend(request.context,URL);
             if ( isDefined('form') ) structAppend(request.context,form);
             // figure out the request action before restoring flash context:
@@ -2325,6 +3688,59 @@ component {
                 request.action = validateAction( request.context[variables.framework.action] );
             } else {
                 request.action = validateAction( lCase(request.context[variables.framework.action]) );
+=======
+            if ( isDefined( 'URL'  ) ) structAppend( request.context, URL );
+            if ( isDefined( 'form' ) ) structAppend( request.context, form );
+            var httpData = getHttpRequestData();
+            if ( variables.framework.decodeRequestBody ) {
+                // thanks to Adam Tuttle and by proxy Jason Dean and Ray Camden for the
+                // seed of this code, inspired by Taffy's basic deserialization
+                // also thanks to John Whish for the URL-encoded form support
+                // which adds support for PUT etc
+                var body = httpData.content;
+                if ( isBinary( body ) ) body = charSetEncode( body, "utf-8" );
+                if ( len( body ) ) {
+                    switch ( listFirst( CGI.CONTENT_TYPE, ';' ) ) {
+                    case "application/json":
+                    case "text/json":
+                        try {
+                            var bodyStruct = read_json( body );
+                            structAppend( request.context, bodyStruct );
+                        } catch ( any e ) {
+                            throw( type = "FW1.JSONPOST",
+                                   message = "Content-Type implies JSON but could not deserialize body: " & e.message );
+                        }
+                        break;
+                    case "application/x-www-form-urlencoded":
+                        try {
+                            var paramPairs = listToArray( body, "&" );
+                            for ( var pair in paramPairs ) {
+                                var parts = listToArray( pair, "=", true ); // handle blank values
+                                request.context[ parts[ 1 ] ] = urlDecode( parts[ 2 ] );
+                            }
+                        } catch ( any e ) {
+                            throw( type = "FW1.JSONPOST",
+                                   message = "Content-Type implies form encoded but could not deserialize body: " & e.message );
+                        }
+                        break;
+                    default:
+                        // ignore -- either built-in (form handling) or unsupported
+                        break;
+                    }
+                }
+            }
+            request._fw1.headers = httpData.headers;
+            // figure out the request action before restoring flash context:
+            if ( !structKeyExists( request.context, variables.framework.action ) ) {
+                request.context[ variables.framework.action ] = getFullyQualifiedAction( variables.framework.home );
+            } else {
+                request.context[ variables.framework.action ] = getFullyQualifiedAction( request.context[ variables.framework.action ] );
+            }
+            if ( variables.framework.noLowerCase ) {
+                request.action = validateAction( request.context[ variables.framework.action ] );
+            } else {
+                request.action = validateAction( lCase(request.context[ variables.framework.action ]) );
+>>>>>>> develop
             }
             request._fw1.requestDefaultsInitialized = true;
         }
@@ -2336,6 +3752,7 @@ component {
         request.subsystembase = request.base & getSubsystemDirPrefix( request.subsystem );
         request.section = getSection( request.action );
         request.item = getItem( request.action );
+<<<<<<< HEAD
         
         if ( runSetup ) {
             if ( usingSubsystems() ) {
@@ -2344,6 +3761,13 @@ component {
             } else {
                 controller( variables.magicApplicationController & '.' & variables.magicApplicationAction );
             }
+=======
+        request._fw1.theFramework = this; // for use in the facade (only!)
+
+        if ( runSetup ) {
+            controller( variables.magicApplicationSubsystem & variables.framework.subsystemDelimiter &
+                        variables.magicApplicationController & '.' & variables.magicApplicationAction );
+>>>>>>> develop
             setupSubsystemWrapper( request.subsystem );
             internalFrameworkTrace( 'setupRequest() called' );
             setupRequest();
@@ -2363,6 +3787,7 @@ component {
     }
 
     private void function setupSubsystemWrapper( string subsystem ) {
+<<<<<<< HEAD
         if ( !usingSubsystems() ) return;
         lock name="fw1_#application.applicationName#_#variables.framework.applicationKey#_subsysteminit_#subsystem#" type="exclusive" timeout="30" {
             if ( !isSubsystemInitialized( subsystem ) ) {
@@ -2388,6 +3813,52 @@ component {
                     setSubsystemBeanFactory( subsystem, ioc );
                 }
         
+=======
+        if ( !len( subsystem ) ) return;
+        lock name="fw1_#application.applicationName#_#variables.framework.applicationKey#_subsysteminit_#subsystem#" type="exclusive" timeout="30" {
+            if ( !isSubsystemInitialized( subsystem ) ) {
+                getFw1App().subsystems[ subsystem ] = now();
+                // Application.cfc does not get a subsystem bean factory!
+                if ( subsystem != variables.magicApplicationSubsystem ) {
+                    var subsystemConfig = getSubsystemConfig( subsystem );
+                    var diEngine = structKeyExists( subsystemConfig, 'diEngine' ) ? subsystemConfig.diEngine : variables.framework.diEngine;
+                    if ( diEngine == "di1" || diEngine == "aop1" ) {
+                        // we can only reliably automate D/I engine setup for DI/1 / AOP/1
+                        var diLocations = structKeyExists( subsystemConfig, 'diLocations' ) ? subsystemConfig.diLocations : variables.framework.diLocations;
+                        var locations = isSimpleValue( diLocations ) ? listToArray( diLocations ) : diLocations;
+                        var subLocations = "";
+                        for ( var loc in locations ) {
+                            var relLoc = trim( loc );
+                            // make a relative location:
+                            if ( len( relLoc ) > 2 && left( relLoc, 2 ) == "./" ) {
+                                relLoc = right( relLoc, len( relLoc ) - 2 );
+                            } else if ( len( relLoc ) > 1 && left( relLoc, 1 ) == "/" ) {
+                                relLoc = right( relLoc, len( relLoc ) - 1 );
+                            }
+                            if ( usingSubsystems() ) {
+                                subLocations = listAppend( subLocations, variables.framework.base & subsystem & "/" & relLoc );
+                            } else {
+                                subLocations = listAppend( subLocations, variables.framework.base & variables.framework.subsystemsFolder & "/" & subsystem & "/" & relLoc );
+                            }
+                        }
+                        if ( len( sublocations ) ) {
+                            var diComponent = structKeyExists( subsystemConfig, 'diComponent' ) ? subsystemConfig : variables.framework.diComponent;
+                            var cfg = { };
+                            if ( structKeyExists( subsystemConfig, 'diConfig' ) ) {
+                                cfg = subsystemConfig.diConfig;
+                            } else {
+                                cfg = structCopy( variables.framework.diConfig );
+                                structDelete( cfg, 'loadListener' );
+                            }
+                            cfg.noClojure = true;
+                            var ioc = new "#diComponent#"( subLocations, cfg );
+                            ioc.setParent( getDefaultBeanFactory() );
+                            setSubsystemBeanFactory( subsystem, ioc );
+                        }
+                    }
+                }
+
+>>>>>>> develop
                 internalFrameworkTrace( 'setupSubsystem() called', subsystem );
                 setupSubsystem( subsystem );
             }
@@ -2397,8 +3868,13 @@ component {
     private string function validateAction( string action ) {
         // check for forward and backward slash in the action - using chr() to avoid confusing TextMate (Hi Nathan!)
         if ( findOneOf( chr(47) & chr(92), action ) > 0 ) {
+<<<<<<< HEAD
             raiseException( type='FW1.actionContainsSlash', message="Found a slash in the action: '#action#'.",
                     detail='Actions are not allowed to embed sub-directory paths.');
+=======
+            throw( type='FW1.actionContainsSlash', message="Found a slash in the action: '#action#'.",
+                   detail='Actions are not allowed to embed sub-directory paths.');
+>>>>>>> develop
         }
         return action;
     }
@@ -2408,8 +3884,15 @@ component {
         // but this will prevent an exception while attempting to throw
         // the exception we actually want to throw!
         param name="request.missingView" default="<unknown.view>";
+<<<<<<< HEAD
         raiseException( type='FW1.viewNotFound', message="Unable to find a view for '#request.action#' action.",
                 detail="'#request.missingView#' does not exist." );
     }
     
+=======
+        throw( type='FW1.viewNotFound', message="Unable to find a view for '#request.action#' action.",
+               detail="'#request.missingView#' does not exist." );
+    }
+
+>>>>>>> develop
 }
