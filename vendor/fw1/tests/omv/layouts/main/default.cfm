@@ -1,1 +1,0 @@
-<cfoutput>DEFAULT#body#</cfoutput>

@@ -9,7 +9,7 @@
     <title>#i18n('meta.title', 'Clone')#</title>
     </cfoutput>
     <!-- Bootstrap -->
-    <link href="vendor/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Main styles -->
     <link href="front/assets/css/main.css" rel="stylesheet">
@@ -123,9 +123,9 @@
 </cfoutput>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="vendor/jquery/dist/jquery.min.js"></script>
+<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 </body>
 </html>
 

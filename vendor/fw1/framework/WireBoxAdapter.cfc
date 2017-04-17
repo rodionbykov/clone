@@ -1,13 +1,7 @@
 component extends="wirebox.system.ioc.Injector" {
-<<<<<<< HEAD
-    variables._fw1_version = "3.0.1";
-/*
-    Copyright (c) 2010-2015, Sean Corfield
-=======
     variables._fw1_version = "4.0.0";
 /*
     Copyright (c) 2010-2016, Sean Corfield
->>>>>>> develop
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
