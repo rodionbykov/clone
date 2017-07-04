@@ -1,6 +1,11 @@
 {
-    "datasource":"clone",
-    "ormdatasource":"clone",    
+    "datasource": {
+                    "class": "org.gjt.mm.mysql.Driver",
+                    "connectionString": "jdbc:mysql://localhost:3306/clone?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=true&autoReconnect=true&jdbcCompliantTruncation=false&useOldAliasMetadataBehavior=true&allowMultiQueries=true&useLegacyDatetimeCode=true",
+                    "connectionLimit": 100,
+                    "username": "root",
+                    "password": ""
+    },    
     "configDir": "config",
     "resourcesDir": "resources",
     "languagesJSON": "languages.json",

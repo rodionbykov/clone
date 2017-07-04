@@ -1,16 +1,15 @@
-component extends='vendor.fw1.framework.one' {
+component extends="vendor.fw1.framework.one" {
 
-    THIS.name = 'clone' & hash( getCurrentTemplatePath() );
+    THIS.name = "clone" & hash( getCurrentTemplatePath() );
     THIS.applicationTimeout = createTimeSpan( 0, 0, 5, 0 );
 
-    THIS.datasource = getParams('datasource');
+    THIS.datasource = getApplicationConfig("datasource");
 
     THIS.ormenabled = true;
-    THIS.ormSettings.datasource = getParams('ormdatasource');
 
-    THIS.mappings[ '/framework' ] = '#getDirectoryFromPath(getCurrentTemplatePath())#vendor/fw1/framework/';
+    THIS.mappings[ "/framework" ] = getApplicationConfig("rootDir") & "vendor/fw1/framework/";
 
-    THIS.customTagPaths = './customtags';
+    THIS.customTagPaths = "./customtags";
 
     VARIABLES.framework = {
         action = 'do',
@@ -21,14 +20,14 @@ component extends='vendor.fw1.framework.one' {
         reloadApplicationOnEveryRequest = true,
         generateSES = false,
         SESOmitIndex = false,
-        diLocations = 'model,controllers',
+        diLocations = 'model,controllers,tests',
         initMethod = 'configure'
     };
 
     //public void function onApplicationStart(){
     //}
 
-    public Any function getParams(String argParam = ""){
+    public any function getApplicationConfig(string argParam = ""){
         var result = {};
         try{
           var jsonParams = FileRead("config/application.json", "utf-8");
@@ -49,7 +48,7 @@ component extends='vendor.fw1.framework.one' {
     public void function setupApplication(){
 
         // loading application parameters which will be used by other services, for example LanguageService
-        var configService = getBeanFactory().getBean( "ConfigService", { params = getParams() } );
+        var configService = getBeanFactory().getBean( "ConfigService", { params = getApplicationConfig() } );
         configService.configure();
 
         // loading available languages and labels for display
