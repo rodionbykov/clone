@@ -1,5 +1,4 @@
 <h1>An Error Occurred</h1>
-<p>I am the subsystem error view: home:main.error.</p>
 <p>Details of the exception:</p>
 <cfoutput>
     <ul>
@@ -17,4 +16,4 @@
         <li>Exception detail: #request.exception.detail#</li>
     </ul>
 </cfoutput>
-<cfdump var="#rc#"/>
+<!--- cfdump var="#rc#"/ --->

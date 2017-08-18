@@ -5,6 +5,14 @@
         <cfargument name="arg_defaultlabel" type="string" required="false" default="" />
         <cfargument name="arg_replacements" type="struct" required="false" default="#StructNew()#" />
 
+         <cfreturn arg_labelkey />
+    </cffunction>
+
+    <cffunction name="i18n1" access="public" returntype="string" output="false">
+        <cfargument name="arg_labelkey" type="string" required="true" hint="Language Label is section.anchor" />
+        <cfargument name="arg_defaultlabel" type="string" required="false" default="" />
+        <cfargument name="arg_replacements" type="struct" required="false" default="#StructNew()#" />
+
         <cfset result = "" />
 
         <cfset var labels = REQUEST.language.getLabels() />

@@ -12,11 +12,13 @@ component extends="vendor.fw1.framework.one" {
     THIS.customTagPaths = "./customtags";
 
     VARIABLES.framework = {
-        action = 'do',
+        action = 'do',        
         usingSubsystems = true,
         defaultSubsystem = 'front',
         defaultSection = 'home',
         defaultItem = 'welcome',
+        subsystemDelimiter = ':',        
+        error = 'front:home.error',
         reloadApplicationOnEveryRequest = true,
         generateSES = false,
         SESOmitIndex = false,
@@ -48,12 +50,12 @@ component extends="vendor.fw1.framework.one" {
     public void function setupApplication(){
 
         // loading application parameters which will be used by other services, for example LanguageService
-        var configService = getBeanFactory().getBean( "ConfigService", { params = getApplicationConfig() } );
-        configService.configure();
+        //var configService = getBeanFactory().getBean( "ConfigService", { applicationConfig = getApplicationConfig() } );
+        //configService.configure();
 
         // loading available languages and labels for display
-        var languageService = getBeanFactory().getBean("LanguageService");
-        languageService.configure();
+        //var languageService = getBeanFactory().getBean("LanguageService");
+        //languageService.configure();
 
         //APPLICATION.securityService = getBeanFactory().getBean("SecurityService");
 
@@ -64,8 +66,8 @@ component extends="vendor.fw1.framework.one" {
     public void function setupRequest(){
 ORMRELOAD();
         // get application language which may be overridden by user settings
-        var languageService = getBeanFactory().getBean("LanguageService");
-        REQUEST.language = languageService.getCurrentLanguage();
+        //var languageService = getBeanFactory().getBean("LanguageService");
+        //REQUEST.language = languageService.getCurrentLanguage();
 
         var helperBean = getBeanFactory().getBean("Helper");
         StructAppend(URL, helperBean);
@@ -73,9 +75,9 @@ ORMRELOAD();
         param name="REQUEST.momentStart" default="#GetTickCount()#";
         WriteOutput("Req set up");
 
-        var securityService = getBeanFactory().getBean("SecurityService");
+        //var securityService = getBeanFactory().getBean("SecurityService");
 
-        REQUEST.user = securityService.getUser();
+        //REQUEST.user = securityService.getUser();
 
         // check if current URL is accessible to user
         // user should have roles and roles have tokens associated with them
@@ -92,9 +94,7 @@ ORMRELOAD();
     }
 
     public void function onError(exception, eventName){
-        //writeDump(exception);writeDump(eventName);
-        setLayout(getSubSystem() & ':layouts.default');
-        super.onError(arguments.Exception, arguments.eventName);
+        include 'error.cfm';
     }
 
 }

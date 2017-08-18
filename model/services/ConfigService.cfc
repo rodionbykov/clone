@@ -1,12 +1,12 @@
 component persistent="false" accessors="true" {
 
     property name="fw";
-    property name="params";
+    property name="applicationConfig";
     property name="settings";
 
-    public any function init(any params){
+    public any function init(any applicationConfig){
 
-        VARIABLES.params = ARGUMENTS.params;
+        VARIABLES.applicationConfig = ARGUMENTS.applicationConfig;
         VARIABLES.settings = [];
 
         return THIS;
@@ -42,12 +42,12 @@ component persistent="false" accessors="true" {
     }
 
     public Struct function importSettings(){
-        if( FileExists( "#VARIABLES.params.rootDir#/#VARIABLES.params.configDir#/#VARIABLES.params.settingsJSON#" ) AND NOT FileExists( "#VARIABLES.params.rootDir#/#VARIABLES.params.resourcesDir#/#VARIABLES.params.settingsJSON#" )){
-            FileCopy( "#VARIABLES.params.rootDir#/#VARIABLES.params.configDir#/#VARIABLES.params.settingsJSON#", "#VARIABLES.params.rootDir#/#VARIABLES.params.resourcesDir#/#VARIABLES.params.settingsJSON#" );
+        if( FileExists( "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.defaultsDir#/#VARIABLES.applicationConfig.settingsJSON#" ) AND NOT FileExists( "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.settingsJSON#" )){
+            FileCopy( "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.defaultsDir#/#VARIABLES.applicationConfig.settingsJSON#", "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.settingsJSON#" );
         }
 
-        if( FileExists("#VARIABLES.params.rootDir#/#VARIABLES.params.resourcesDir#/#VARIABLES.params.settingsJSON#") ){
-            var jsonSettings = FileRead("#VARIABLES.params.rootDir#/#VARIABLES.params.resourcesDir#/#VARIABLES.params.settingsJSON#", "utf-8");
+        if( FileExists("#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.settingsJSON#") ){
+            var jsonSettings = FileRead("#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.settingsJSON#", "utf-8");
         }
 
         var structSettings = DeserializeJSON(jsonSettings);
@@ -57,20 +57,20 @@ component persistent="false" accessors="true" {
 
     public Struct function importLanguages(){
 
-        if( FileExists( "#VARIABLES.params.rootDir#/#VARIABLES.params.configDir#/#VARIABLES.params.languagesJSON#" ) AND NOT FileExists( "#VARIABLES.params.rootDir#/#VARIABLES.params.resourcesDir#/#VARIABLES.params.languagesJSON#" )){
-            FileCopy( "#VARIABLES.params.rootDir#/#VARIABLES.params.configDir#/#VARIABLES.params.languagesJSON#", "#VARIABLES.params.rootDir#/#VARIABLES.params.resourcesDir#/#VARIABLES.params.languagesJSON#" );
+        if( FileExists( "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.defaultsDir#/#VARIABLES.applicationConfig.languagesJSON#" ) AND NOT FileExists( "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.languagesJSON#" )){
+            FileCopy( "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.defaultsDir#/#VARIABLES.applicationConfig.languagesJSON#", "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.languagesJSON#" );
         }
 
-        if( FileExists("#VARIABLES.params.rootDir#/#VARIABLES.params.resourcesDir#/#VARIABLES.params.languagesJSON#") ){
-            var jsonLanguages = FileRead("#VARIABLES.params.rootDir#/#VARIABLES.params.resourcesDir#/#VARIABLES.params.languagesJSON#", "utf-8");
+        if( FileExists("#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.languagesJSON#") ){
+            var jsonLanguages = FileRead("#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.languagesJSON#", "utf-8");
         }
 
-        if( FileExists( "#VARIABLES.params.rootDir#/#VARIABLES.params.configDir#/#VARIABLES.params.labelsJSON#" ) AND NOT FileExists( "#VARIABLES.params.rootDir#/#VARIABLES.params.resourcesDir#/#VARIABLES.params.labelsJSON#" )){
-           FileCopy( "#VARIABLES.params.rootDir#/#VARIABLES.params.configDir#/#VARIABLES.params.labelsJSON#", "#VARIABLES.params.rootDir#/#VARIABLES.params.resourcesDir#/#VARIABLES.params.labelsJSON#" );
+        if( FileExists( "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.defaultsDir#/#VARIABLES.applicationConfig.labelsJSON#" ) AND NOT FileExists( "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.labelsJSON#" )){
+           FileCopy( "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.defaultsDir#/#VARIABLES.applicationConfig.labelsJSON#", "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.labelsJSON#" );
         }
 
-        if( FileExists("#VARIABLES.params.rootDir#/#VARIABLES.params.resourcesDir#/#VARIABLES.params.labelsJSON#") ){
-            var jsonLabels = FileRead("#VARIABLES.params.rootDir#/#VARIABLES.params.resourcesDir#/#VARIABLES.params.labelsJSON#", "utf-8");
+        if( FileExists("#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.labelsJSON#") ){
+            var jsonLabels = FileRead("#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.labelsJSON#", "utf-8");
         }
 
         var structLanguages = DeserializeJSON(jsonLanguages);
@@ -96,10 +96,10 @@ component persistent="false" accessors="true" {
         }
 
         var jsonLabels = SerializeJSON(structLabels);
-        FileWrite("#VARIABLES.params.rootDir#/#VARIABLES.params.resourcesDir#/#VARIABLES.params.labelsJSON#", jsonLabels);
+        FileWrite("#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.labelsJSON#", jsonLabels);
 
         var jsonLanguages = SerializeJSON(structLanguages);
-        FileWrite("#VARIABLES.params.rootDir#/#VARIABLES.params.resourcesDir#/#VARIABLES.params.languagesJSON#", jsonLanguages);
+        FileWrite("#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.languagesJSON#", jsonLanguages);
     }
 
     private void function populateSettings(argSettings){
@@ -109,7 +109,7 @@ component persistent="false" accessors="true" {
         VARIABLES.settings = [];
 
         for (var k in argSettings){
-            VARIABLES.settings.append( bf.getBean( "Setting", { name: k, value: argSettings[k] } ) );
+            VARIABLES.settings.append( bf.getBean( "Setting", { id: k, value: argSettings[k] } ) );
         }
 
     }
