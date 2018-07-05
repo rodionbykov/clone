@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.18, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.22, for Linux (x86_64)
 --
--- Host: localhost    Database: clone
+-- Host: 192.168.56.102    Database: clone
 -- ------------------------------------------------------
--- Server version	5.7.18-0ubuntu0.16.10.1
+-- Server version	5.5.5-10.2.15-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -26,9 +26,9 @@ CREATE TABLE `roles` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `pluralname` varchar(45) NOT NULL,
   `singularname` varchar(45) NOT NULL,
-  `tokens` text,
-  `isdefault` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `isactive` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `tokens` text DEFAULT NULL,
+  `isdefault` tinyint(3) unsigned NOT NULL DEFAULT 1,
+  `isactive` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -41,32 +41,6 @@ LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
 INSERT INTO `roles` VALUES (1,'Administrators','Administrator','ADD_USER,EDIT_USER,DELETE_USER',0,1),(2,'Editors','Editor','ADD_ANY,EDIT_ANY,DELETE_ANY',0,1),(3,'Authors','Author','ADD_OWN,EDIT_OWN,DELETE_OWN',0,1),(4,'Users','User','VIEW_ANY',1,1);
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `settings`
---
-
-DROP TABLE IF EXISTS `settings`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `settings` (
-  `id` varchar(45) NOT NULL,
-  `label` varchar(255) NOT NULL,
-  `value` text,
-  `valuetype` enum('STRING') DEFAULT 'STRING',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `settings`
---
-
-LOCK TABLES `settings` WRITE;
-/*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-/*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -107,7 +81,7 @@ CREATE TABLE `users` (
   `passwd` varchar(128) NOT NULL,
   `oauthid` varchar(225) DEFAULT NULL,
   `oauthsource` varchar(3) DEFAULT NULL,
-  `isactive` tinyint(1) NOT NULL DEFAULT '1',
+  `isactive` tinyint(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   UNIQUE KEY `IXU_login` (`login`),
   UNIQUE KEY `IXU_oauth` (`oauthid`,`oauthsource`)
@@ -189,7 +163,7 @@ CREATE TABLE `users_sessions` (
   `token` varchar(45) NOT NULL,
   `created` datetime NOT NULL,
   `moment` datetime NOT NULL,
-  `isactive` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `isactive` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   UNIQUE KEY `IXU_token` (`token`),
   KEY `fk_session_user` (`id_user`),
@@ -215,12 +189,12 @@ DROP TABLE IF EXISTS `users_settings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users_settings` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `id_user` int(10) NOT NULL,
-  `id_setting` varchar(45) NOT NULL,
-  `value` text,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `ixu_user_setting` (`id_setting`,`id_user`)
+  `name` varchar(45) NOT NULL,
+  `value` text DEFAULT NULL,
+  PRIMARY KEY (`name`,`id_user`),
+  UNIQUE KEY `ixu_user_setting` (`id_user`),
+  UNIQUE KEY `name_UNIQUE` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -232,6 +206,10 @@ LOCK TABLES `users_settings` WRITE;
 /*!40000 ALTER TABLE `users_settings` DISABLE KEYS */;
 /*!40000 ALTER TABLE `users_settings` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping events for database 'clone'
+--
 
 --
 -- Dumping routines for database 'clone'
@@ -411,4 +389,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-08-18 18:02:57
+-- Dump completed on 2018-07-05 18:01:24
