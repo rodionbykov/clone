@@ -22,7 +22,7 @@ component extends="vendor.fw1.framework.one" {
         reloadApplicationOnEveryRequest = true,
         generateSES = false,
         SESOmitIndex = false,
-        diLocations = 'model,controllers,tests',
+        diLocations = 'model,controllers',
         initMethod = 'configure'
     };
 
@@ -50,9 +50,9 @@ component extends="vendor.fw1.framework.one" {
     public void function setupApplication(){
 
         // loading application parameters which will be used by other services, for example LanguageService
-        //var configService = getBeanFactory().getBean( "ConfigService", { applicationConfig = getApplicationConfig() } );
-        //configService.configure();
-
+        var configService = getBeanFactory().getBean( "ConfigService", { applicationConfig = getApplicationConfig() } );
+        configService.configure();
+writedump(configService.getSettings());
         // loading available languages and labels for display
         //var languageService = getBeanFactory().getBean("LanguageService");
         //languageService.configure();

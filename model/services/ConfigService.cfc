@@ -7,19 +7,21 @@ component persistent="false" accessors="true" {
     public any function init(any applicationConfig){
 
         VARIABLES.applicationConfig = ARGUMENTS.applicationConfig;
-        VARIABLES.settings = [];
+        VARIABLES.settings = [];             
 
         return THIS;
     }
 
     public any function configure(){
+       if (NOT DirectoryExists("#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#")){
+           directoryCreate("#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#");
+        }
         THIS.getSettings();
     }
 
     public Array function getSettings(){
         if ( ArrayLen(VARIABLES.settings) EQ 0 ){
-            var structSettings = importSettings();
-            THIS.populateSettings( structSettings );
+            THIS.populateSettings( importSettings() );
         }
 
         return VARIABLES.settings;
@@ -42,8 +44,11 @@ component persistent="false" accessors="true" {
     }
 
     public Struct function importSettings(){
-        if( FileExists( "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.defaultsDir#/#VARIABLES.applicationConfig.settingsJSON#" ) AND NOT FileExists( "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.settingsJSON#" )){
-            FileCopy( "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.defaultsDir#/#VARIABLES.applicationConfig.settingsJSON#", "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.settingsJSON#" );
+        if( FileExists( "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.defaultsDir#/#VARIABLES.applicationConfig.settingsJSON#" ) 
+            AND NOT 
+            FileExists( "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.settingsJSON#" )){
+            FileCopy( "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.defaultsDir#/#VARIABLES.applicationConfig.settingsJSON#", 
+                      "#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.settingsJSON#" );
         }
 
         if( FileExists("#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.settingsJSON#") ){
@@ -88,7 +93,7 @@ component persistent="false" accessors="true" {
         var structLanguages = Duplicate(arg_languages);
 
         // modify structures to fit file format
-        for(var l in arg_languages){
+        for(var l in arg_languages){Bean
             StructDelete( structLabels[l], "name");
             StructDelete( structLabels[l], "native");
             structLabels[l] = structLabels[l].labels;
@@ -109,7 +114,7 @@ component persistent="false" accessors="true" {
         VARIABLES.settings = [];
 
         for (var k in argSettings){
-            VARIABLES.settings.append( bf.getBean( "Setting", { id: k, value: argSettings[k] } ) );
+            VARIABLES.settings.append( bf.getBean( "Setting", { name: k, value: argSettings[k] } ) );
         }
 
     }

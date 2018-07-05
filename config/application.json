@@ -4,10 +4,10 @@
                     "connectionString": "jdbc:mysql://localhost:3306/clone?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=true&autoReconnect=true&jdbcCompliantTruncation=false&useOldAliasMetadataBehavior=true&allowMultiQueries=true&useLegacyDatetimeCode=true",
                     "connectionLimit": 100,
                     "username": "root",
-                    "password": ""
+                    "password": "12345"
     },    
     "defaultsDir": "config/defaults",
-    "resourcesDir": "resources",
+    "resourcesDir": "config/run",
     "languagesJSON": "languages.json",
     "labelsJSON": "labels.json",
     "settingsJSON": "settings.json"

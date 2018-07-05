@@ -11,13 +11,14 @@ component persistent="true" entityname="User" table="users" accessors="true" {
              type="array"
              where="isactive = 1";
 
+/*
     property name="settings"
              singularName="setting"
              fieldtype="one-to-many"
              cfc="Setting"
              fkcolumn="id_user"
              type="array";
-
+*/
     property name="roles"
              singularname="role"
              fieldtype="many-to-many"
