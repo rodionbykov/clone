@@ -27,12 +27,12 @@
       box-sizing: border-box;
     }
     html { height: 101%; }
-    body { 
-      background: #f0f0f0 url('http://s22.postimg.org/3l1gnfmwd/image.gif'); 
+    body {
+      background: #f0f0f0 url('http://s22.postimg.org/3l1gnfmwd/image.gif');
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       color: #313131;
-      font-size: 62.5%; 
-      line-height: 1; 
+      font-size: 62.5%;
+      line-height: 1;
     }
 
     ::selection { background: #a4dcec; }
@@ -53,27 +53,27 @@
     }
     :-ms-input-placeholder { /* Internet Explorer 10+ */
       color: #ccc !important;
-      font-style: italic;  
+      font-style: italic;
     }
 
-    br { display: block; line-height: 2.2em; } 
+    br { display: block; line-height: 2.2em; }
 
     article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
     ol, ul { list-style: none; }
 
-    input, textarea { 
+    input, textarea {
       -webkit-font-smoothing: antialiased;
       -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
       box-sizing: border-box;
-      outline: none; 
+      outline: none;
     }
 
     blockquote, q { quotes: none; }
     blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
-    strong { font-weight: bold; } 
+    strong { font-weight: bold; }
 
     table { border-collapse: collapse; border-spacing: 0; }
     img { border: 0; max-width: 100%; }
@@ -121,11 +121,11 @@
       vertical-align: middle;
       background: #f0f0f0;
     }
-    h1:before {    
+    h1:before {
       left: -.5em;
       margin: 0 0 0 -50%;
     }
-    h1:after {    
+    h1:after {
       left: .5em;
       margin: 0 -50% 0 0;
     }
@@ -223,7 +223,7 @@
     .successbox h1:before, .successbox h1:after { background: #cad8a9; }
     .errorbox h1:before, .errorbox h1:after { background: #d6b8b7; }
 
-    .notify .alerticon { 
+    .notify .alerticon {
       display: block;
       text-align: center;
       margin-bottom: 10px;
@@ -233,27 +233,21 @@
 </head>
 
 <body>
-  
+
   <div id="w">
     <div id="content">
-      
+      <cfdump var="#exception#" abort />
       <div class="notify errorbox">
         <h1>Error</h1>
         <span class="alerticon"><img src="error.png" alt="error" /></span>
         <cfoutput>
-        <p>#exception.rootCause.detail#</p>
-        <p>#exception.rootCause.message#</p>
-        <p>#eventName#</p>
+        <p>#exception.detail#</p>
+        <p>#exception.message#</p>
         </cfoutput>
       </div>
-      
+
     </div><!-- @end #content -->
   </div><!-- @end #w -->
 
 </body>
 </html>
-
-<!---
-<cfdump var="#exception#" />
-<cfdump var="#eventName#" />
---->

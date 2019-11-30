@@ -1,70 +1,79 @@
-<cfcomponent persistent="false" accessors="true" output="true">
+component accessors="true" {
 
-    <cfproperty name="fw" />
-    <cfproperty name="languages" />
-    <cfproperty name="currentLanguage" />
+  property name="fw";
+  property name="languagesFile";
+  property name="labelsFile";
+  property name="languages";
+  property name="currentLanguage";
 
-    <cfproperty name="configService" />
+  public any function init(any languagesFile, any labelsFile){
+    variables.languagesFile = arguments.languagesFile
+    variables.labelsFile = arguments.labelsFile
+    variables.languages = []
+    variables.currentLanguage = false
 
-    <cffunction name="init" access="public" returntype="any" output="false">
-        <cfargument name="fw" required="true" />
+    return this
+  }
 
-        <cfset VARIABLES.languages = ArrayNew(1) />
-        <cfset VARIABLES.currentLanguage = false />
+  public any function configure(){
+    var structLanguages = importLanguages()
+  }
 
-        <cfreturn THIS />
-    </cffunction>
+  public any function importLanguages(){
 
-    <cffunction name="configure" access="public" returntype="any" output="false">
+    if( FileExists(variables.languagesFile) ){
+      var jsonLanguages = FileRead(variables.languagesFile, "utf-8")
+      var structLanguages = DeserializeJSON(jsonLanguages)
 
-        <cfset var structLanguages = VARIABLES.configService.importLanguages() />
+      for(s in structLanguages){
+        var l = variables.fw.getBeanFactory().getBean( "Language",
+          { code = s, name = structLanguages[s]["name"], native = structLanguages[s]["native"] }
+        )
+        variables.languages.append(l)
+      }
+    }
 
-        <!--- loading languages --->
-        <cftry>
-            <cfloop collection="#structLanguages#" index="i">
-                <cfset var l = VARIABLES.fw.getBeanFactory().getBean( "Language", { code = i, name = StructFind(structLanguages, i)["name"], native = StructFind(structLanguages, i)["native"] } ) />
-                <cfset l.setLabels( StructFind(structLanguages, i)["labels"] ) />
-                <cfset ArrayAppend(VARIABLES.languages, l) />
-            </cfloop>
+    if( FileExists(variables.labelsFile) ){
+      var jsonLabels = FileRead(variables.labelsFile, "utf-8")
+      var structLabels = DeserializeJSON(jsonLabels)
 
-            <cfcatch>
-                <cfdump var="#cfcatch#">
-            </cfcatch>
-        </cftry>
+      for(s in structLabels){
+        for(i in structLabels[s]){
+          for(l in variables.languages){
+            l.setLabel(s, i, structLabels[s][i][l.getCode()])
+          }
+        }
+      }
+    }
 
-        <cfset var configLanguage = VARIABLES.configService.getSetting("language") />
+    return variables.languages
+  }
 
-        <cfloop array="#VARIABLES.languages#" index="i">
-            <cfif i.getCode() EQ configLanguage.getValue()>
-                <cfset LOCAL.result = i />
-                <cfset THIS.setCurrentLanguage(i) />
-            </cfif>
-        </cfloop>
+  public any function getLanguage(String arg_code){
+    for(l in variables.languages){
+      if(l.getCode() eq arg_code){
+        return l
+      }
+    }
+  }
+// todo all languages export to json
+  public void function exportLanguages(Struct arg_languages){
+      var structLabels = Duplicate(arg_languages);
+      var structLanguages = Duplicate(arg_languages);
 
-        <cfreturn THIS />
-    </cffunction>
+      // modify structures to fit file format
+      for(var l in arg_languages){
+          StructDelete( structLabels[l], "name");
+          StructDelete( structLabels[l], "native");
+          structLabels[l] = structLabels[l].labels;
+          StructDelete( structLanguages[l], "labels");
+      }
 
-    <cffunction name="update" access="public" returntype="void" output="false">
-        <cfset var result = {} />
-        <cfset var isdirty = false />
+      var jsonLabels = SerializeJSON(structLabels);
+      FileWrite("#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.labelsJSON#", jsonLabels);
 
-        <cfloop array="#VARIABLES.languages#" index="l">
-            <cfif l.isDirty() EQ true><cfset isdirty = true /></cfif>
-            <cfset StructAppend( LOCAL.result, l.toStruct(), true ) />
-        </cfloop>
+      var jsonLanguages = SerializeJSON(structLanguages);
+      FileWrite("#VARIABLES.applicationConfig.rootDir#/#VARIABLES.applicationConfig.resourcesDir#/#VARIABLES.applicationConfig.languagesJSON#", jsonLanguages);
+  }
 
-        <cfif LOCAL.isdirty EQ true>
-            <cfset VARIABLES.configService.exportLanguages( LOCAL.result ) />
-        </cfif>
-    </cffunction>
-
-    <cffunction name="findOne" access="public" returntype="any" output="false"
-                hint="Returns Language object by provided language code">
-        <cfargument name="arg_languagecode" type="string" required="true" />
-
-        <cfset var result = StructNew() />
-
-        <cfreturn LOCAL.result />
-    </cffunction>
-
-</cfcomponent>
+}

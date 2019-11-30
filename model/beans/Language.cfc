@@ -1,53 +1,67 @@
-component persistent="false" accessors="true" {
+component accessors="true" {
 
-    property name="code";
-    property name="name";
-    property name="native";
-    property name="labels";
-    property name="isdirty";
+  property name="code";
+  property name="name";
+  property name="native";
+  property name="labels";
+  property name="isdirty";
 
-    public any function init(String code, String name, String native) {
+  public any function init(String code, String name, String native) {
 
-        VARIABLES.code = ARGUMENTS.code;
-        VARIABLES.name = ARGUMENTS.name;
-        VARIABLES.native = ARGUMENTS.native;
-        VARIABLES.isDirty = false;
+    variables.code = arguments.code
+    variables.name = arguments.name
+    variables.native = arguments.native
+    variables.isDirty = false
 
-        VARIABLES.labels = {};
+    variables.labels = {}
 
-        return THIS;
+    return this
+  }
+
+  public string function label(String arg_token, String arg_label = ""){
+    return this.setLabel(ListFirst(arg_token, "."), ListLast(arg_token, "."), arg_label)
+  }
+
+  public string function getLabel(String arg_section, String arg_item, String arg_label = ""){
+    return this.setLabel(arg_section, arg_item, arg_label)
+  }
+
+  public string function setLabel(String arg_section, String arg_item, String arg_label) {
+    if ( not StructKeyExists(variables.labels, arg_section) ){
+      variables.labels[arg_section] = {}
     }
 
-    public void function setLabel(String arg_section, String arg_anchor, String arg_label) {
-        if ( NOT StructKeyExists(VARIABLES.labels, arg_section) ){
-            VARIABLES.labels[arg_section] = {};
-        }
-
-        if ( NOT StructKeyExists(VARIABLES.labels[arg_section], arg_anchor) ){
-            VARIABLES.labels[arg_section][arg_anchor] = "";
-        }
-
-        if(VARIABLES.labels[arg_section][arg_anchor] NEQ arg_label){
-            VARIABLES.isDirty = true;
-        }
-
-        VARIABLES.labels[arg_section][arg_anchor] = arg_label;
+    if ( not StructKeyExists(variables.labels[arg_section], arg_item) ){
+      variables.labels[arg_section][arg_item] = ""
     }
 
-    public Boolean function isDirty(){
-       return VARIABLES.isDirty;
+    // overcoming strange cf behaviour for structGet
+    if( IsStruct(variables.labels[arg_section][arg_item]) and StructIsEmpty(variables.labels[arg_section][arg_item]) ){
+      variables.labels[arg_section][arg_item] = ""
     }
 
-    public Struct function toStruct(){
-       var result = {};
-
-       result[VARIABLES.code] = {
-          'name' = VARIABLES.name,
-          'native' = VARIABLES.native,
-          'labels' = VARIABLES.labels
-       };
-
-       return result;
+    if(arg_label neq "" and variables.labels[arg_section][arg_item] neq arg_label){
+      variables.labels[arg_section][arg_item] = arg_label
+      variables.isDirty = true
     }
+
+    return variables.labels[arg_section][arg_item]
+  }
+
+  public boolean function isDirty(){
+    return variables.isDirty
+  }
+
+  public Struct function toStruct(){
+    var result = {};
+
+    result[variables.code] = {
+      'name' = variables.name,
+      'native' = variables.native,
+      'labels' = variables.labels
+    };
+
+    return result;
+  }
 
 }
