@@ -4,19 +4,13 @@ component accessors="true" {
   property name="languagesFile";
   property name="labelsFile";
   property name="languages";
-  property name="currentLanguage";
 
   public any function init(any languagesFile, any labelsFile){
     variables.languagesFile = arguments.languagesFile
     variables.labelsFile = arguments.labelsFile
     variables.languages = []
-    variables.currentLanguage = false
 
     return this
-  }
-
-  public any function configure(){
-    var structLanguages = importLanguages()
   }
 
   public any function importLanguages(){
@@ -50,12 +44,17 @@ component accessors="true" {
   }
 
   public any function getLanguage(String arg_code){
+
+    if(ArrayLen(variables.languages) eq 0)
+      importLanguages()
+
     for(l in variables.languages){
       if(l.getCode() eq arg_code){
         return l
       }
     }
   }
+
 // todo all languages export to json
   public void function exportLanguages(Struct arg_languages){
       var structLabels = Duplicate(arg_languages);

@@ -11,13 +11,9 @@ component accessors="true" {
     return this
   }
 
-  public any function configure(){
-    this.getSettings()
-  }
-
   public Array function getSettings(){
     if( ArrayLen(variables.settings) eq 0 )
-      this.populateSettings()
+      this.populateSettings( importSettings() )
 
     return variables.settings
   }
@@ -26,7 +22,7 @@ component accessors="true" {
     var result = false
 
     if ( ArrayLen(variables.settings) eq 0 ){
-      getSettings()
+      this.getSettings()
     }
 
     for (var s in variables.settings){
@@ -43,24 +39,24 @@ component accessors="true" {
   }
 
   public Struct function importSettings(){
-    if( FileExists(variables.settingsFile) ){
+    if( FileExists(variables.settingsFile) )
       var jsonSettings = FileRead(variables.settingsFile, "utf-8")
-    }
 
     var structSettings = DeserializeJSON(jsonSettings)
 
     return structSettings
   }
 
-  private void function populateSettings(){
-    var structSettings = importSettings()
+  public Array function populateSettings(Struct arg_settings){
     var bf = variables.fw.getBeanFactory()
 
     variables.settings = []
 
-    for(var k in structSettings){
-      variables.settings.append( bf.getBean( "Setting", { name: k, value: structSettings[k] } ) )
+    for(var k in arg_settings){
+      variables.settings.append( bf.getBean( "Setting", { name: k, value: arg_settings[k] } ) )
     }
+
+    return variables.settings
   }
 
 }
