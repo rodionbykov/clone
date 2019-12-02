@@ -128,4 +128,3 @@
 <script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
-

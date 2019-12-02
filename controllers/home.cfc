@@ -1,6 +1,7 @@
 component accessors="true" output="false" {
 
     property name="securityService";
+    property name="languageService";
 
     public void function init (any fw) {
         VARIABLES.fw = ARGUMENTS.fw;
@@ -13,8 +14,8 @@ component accessors="true" output="false" {
         param name="rc.warnings" default=ArrayNew(1);
     }
 
-    public void function list(any rc){
-       rc.users = EntityLoad("User");
+    public void function welcome (any rc) {
+
     }
 
 }

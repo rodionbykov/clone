@@ -21,12 +21,10 @@ component extends="vendor.fw1.framework.one" {
 
   variables.framework = {
     action = 'do',
-    usingSubsystems = true,
-    defaultSubsystem = 'front',
+    usingSubsystems = false,
     defaultSection = 'home',
     defaultItem = 'welcome',
-    subsystemDelimiter = ':',
-    error = 'front:home.error',
+    error = 'home.error',
     reloadApplicationOnEveryRequest = true,
     generateSES = false,
     SESOmitIndex = false,
@@ -55,58 +53,54 @@ component extends="vendor.fw1.framework.one" {
       throw("Cannot copy setup files");
     }
 
-// writeDump(getApplicationMetadata());
-// writeDump(getApplicationSettings());
+    // writeDump(getApplicationMetadata())
+    // writeDump(getApplicationSettings())
+
+    //APPLICATION.securityService = getBeanFactory().getBean("SecurityService")
 
     // loading application parameters which will be used by other services, for example LanguageService
-    var configService = getBeanFactory().getBean( "ConfigService", { settingsFile = VARIABLES.settingsFile } );
+    var configService = getBeanFactory().getBean("ConfigService", { settingsFile = VARIABLES.settingsFile })
 
     // loading available languages and labels for display
     var languageService = getBeanFactory().getBean("LanguageService", { languagesFile = VARIABLES.languagesFile, labelsFile = VARIABLES.labelsFile } )
 
-    //APPLICATION.securityService = getBeanFactory().getBean("SecurityService");
-
-    REQUEST.momentStart = GetTickCount();
-    WriteOutput("App set up!");
+    REQUEST.momentStart = GetTickCount()
   }
 
-    public void function setupRequest(){
+  public void function setupRequest(){
 
-        //ORMRELOAD();
+    // ORMRELOAD();
 
-        var configService = getBeanFactory().getBean("ConfigService")
-        var languageService = getBeanFactory().getBean("LanguageService")
+    var configService = getBeanFactory().getBean("ConfigService")
+    var languageService = getBeanFactory().getBean("LanguageService")
 
-        REQUEST.language = languageService.getLanguage( configService.getValue("language") )
+    REQUEST.language = languageService.getLanguage( configService.getValue("language") )
 
-        writeOutput(REQUEST.language.label("home.welcome"))
+    var helperBean = getBeanFactory().getBean("Helper")
+    StructAppend(URL, helperBean); // hack I probably read on Ray Camden blog but I not sure
 
-        var helperBean = getBeanFactory().getBean("Helper");
-        StructAppend(URL, helperBean);
+    param name="REQUEST.momentStart" default="#GetTickCount()#";
 
-        param name="REQUEST.momentStart" default="#GetTickCount()#";
-        WriteOutput("Req set up!")
+    //var securityService = getBeanFactory().getBean("SecurityService")
 
-        //var securityService = getBeanFactory().getBean("SecurityService");
+    //REQUEST.user = securityService.getUser()
 
-        //REQUEST.user = securityService.getUser();
+    // check if current URL is accessible to user
+    // user should have roles and roles have tokens associated with them
+    //APPLICATION.securityService.checkUser()
+  }
 
-        // check if current URL is accessible to user
-        // user should have roles and roles have tokens associated with them
-        //APPLICATION.securityService.checkUser();
-    }
+  public void function onRequestEnd(){
+      request.duration = GetTickCount() - request.momentStart
+      writedump(var="#request.duration#", label="duration, ms")
 
-    public void function onRequestEnd(){
-       var duration = GetTickCount() - REQUEST.momentStart
-       writedump(duration & " ms")
+      // TODO do it only in dev mode, not live mode
+      // var languageService = getBeanFactory().getBean("LanguageService");
+      // languageService.update();
+  }
 
-       // TODO do it only in dev mode, not live mode
-       // var languageService = getBeanFactory().getBean("LanguageService");
-       // languageService.update();
-    }
-
-    public void function onError(exception, eventName){
-        include 'error.cfm'
-    }
+  public void function onError(exception, eventName){
+      include 'error.cfm'
+  }
 
 }
