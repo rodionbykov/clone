@@ -94,9 +94,12 @@ component extends="vendor.fw1.framework.one" {
       request.duration = GetTickCount() - request.momentStart
       writedump(var="#request.duration#", label="duration, ms")
 
-      // TODO do it only in dev mode, not live mode
-      // var languageService = getBeanFactory().getBean("LanguageService");
-      // languageService.update();
+      var languageService = getBeanFactory().getBean("LanguageService");
+      if(languageService.hasDirtyLanguage()){
+        languageService.exportLanguages()
+        languageService.setAllDirty(false)
+        writedump("wrote file")
+      }
   }
 
   public void function onError(exception, eventName){
