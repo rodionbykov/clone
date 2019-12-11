@@ -77,7 +77,7 @@
 </cfoutput>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="vendor/jquery/jquery-3.3.1.min.js"></script>
+<script src="vendor/jquery/jquery-3.4.1.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 </body>
