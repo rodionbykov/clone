@@ -1,7 +1,11 @@
 component extends="vendor.fw1.framework.one" {
 
   this.name = "clone" & hash( getCurrentTemplatePath() );
-  this.applicationTimeout = createTimeSpan( 0, 0, 5, 0 );
+  this.applicationTimeout = createTimeSpan( 0, 1, 0, 0 );
+  this.sessionmanagement = "true";
+  this.sessiontimeout = createtimespan(0, 0, 10, 0);
+  this.clientmanagement = "true";
+  this.loginstorage = "session";
 
   this.datasource= "clone";
   this.ormenabled = true;
