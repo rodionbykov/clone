@@ -5,7 +5,7 @@ component accessors="true" {
   property name="labelsFile";
   property name="languages";
 
-  public any function init(any languagesFile, any labelsFile){
+  public any function init(languagesFile, labelsFile){
     variables.languagesFile = arguments.languagesFile
     variables.labelsFile = arguments.labelsFile
     variables.languages = []
@@ -46,8 +46,7 @@ component accessors="true" {
     return variables.languages
   }
 
-  public any function getLanguage(String arg_code){
-
+  public any function getLanguage(arg_code){
     if(ArrayLen(variables.languages) eq 0)
       importLanguages()
 

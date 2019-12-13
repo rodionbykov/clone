@@ -1,11 +1,7 @@
 component extends="vendor.fw1.framework.one" {
 
   this.name = "clone" & hash( getCurrentTemplatePath() );
-  this.applicationTimeout = createTimeSpan( 0, 1, 0, 0 );
-  this.sessionmanagement = "true";
-  this.sessiontimeout = createtimespan(0, 0, 10, 0);
-  this.clientmanagement = "true";
-  this.loginstorage = "session";
+  this.applicationTimeout = createTimeSpan( 0, 0, 5, 0 );
 
   this.datasource= "clone";
   this.ormenabled = true;
@@ -19,9 +15,11 @@ component extends="vendor.fw1.framework.one" {
   variables.settingsFilename = "settings.json";
   variables.languagesFilename = "languages.json";
   variables.labelsFilename = "labels.json";
+  variables.securityFilename = "security.json";
   variables.settingsFile = variables.configDir & "/" & variables.settingsFilename;
   variables.languagesFile = variables.configDir & "/" & variables.languagesFilename;
   variables.labelsFile = variables.configDir & "/" & variables.labelsFilename;
+  variables.securityFile = variables.configDir & "/" & variables.securityFilename;
 
   variables.framework = {
     action = 'do',
@@ -53,6 +51,8 @@ component extends="vendor.fw1.framework.one" {
         FileCopy(VARIABLES.setupDir & "/" & VARIABLES.languagesFilename, VARIABLES.configDir);
       if(not FileExists(VARIABLES.labelsFile))
         FileCopy(VARIABLES.setupDir & "/" & VARIABLES.labelsFilename, VARIABLES.configDir);
+      if(not FileExists(VARIABLES.securityFile))
+        FileCopy(VARIABLES.setupDir & "/" & VARIABLES.securityFilename, VARIABLES.configDir);
     }catch(any e){
       throw("Cannot copy setup files");
     }
@@ -74,6 +74,9 @@ component extends="vendor.fw1.framework.one" {
   public void function setupRequest(){
 
     // ORMRELOAD();
+
+    var sec = DeserializeJSON(FileRead(VARIABLES.securityFile));
+    writedump(sec);abort;
 
     var configService = getBeanFactory().getBean("ConfigService")
     var languageService = getBeanFactory().getBean("LanguageService")
