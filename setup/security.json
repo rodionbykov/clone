@@ -1,8 +1,5 @@
 {
   "user":{
-    "profile":
-      [
-        'user'
-      ]
+    "profile": "user"
   }
 }

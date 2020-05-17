@@ -1,7 +1,10 @@
 component extends="vendor.fw1.framework.one" {
 
   this.name = "clone" & hash( getCurrentTemplatePath() );
-  this.applicationTimeout = createTimeSpan( 0, 0, 5, 0 );
+  this.applicationTimeout = createTimeSpan( 0, 1, 0, 0 );
+  this.sessionmanagement = "true";
+  this.sessiontimeout = createtimespan(0, 0, 10, 0);
+  this.loginstorage = "session";
 
   this.datasource= "clone";
   this.ormenabled = true;
@@ -15,10 +18,12 @@ component extends="vendor.fw1.framework.one" {
   variables.settingsFilename = "settings.json";
   variables.languagesFilename = "languages.json";
   variables.labelsFilename = "labels.json";
+  variables.rolesFilename = "roles.json";
   variables.securityFilename = "security.json";
   variables.settingsFile = variables.configDir & "/" & variables.settingsFilename;
   variables.languagesFile = variables.configDir & "/" & variables.languagesFilename;
   variables.labelsFile = variables.configDir & "/" & variables.labelsFilename;
+  variables.rolesFile = variables.configDir & "/" & variables.rolesFilename;
   variables.securityFile = variables.configDir & "/" & variables.securityFilename;
 
   variables.framework = {
@@ -38,21 +43,23 @@ component extends="vendor.fw1.framework.one" {
 
   public void function setupApplication(){
     try{
-      if (not DirectoryExists( VARIABLES.configDir )){
-        DirectoryCreate( VARIABLES.configDir );
+      if (not DirectoryExists( variables.configDir )){
+        DirectoryCreate( variables.configDir )
       }
     }catch(any e){
-      throw("Cannot create config directory");
+      throw("Cannot create config directory")
     }
     try{
-      if(not FileExists(VARIABLES.settingsFile))
-        FileCopy(VARIABLES.setupDir & "/" & VARIABLES.settingsFilename, VARIABLES.configDir);
-      if(not FileExists(VARIABLES.languagesFile))
-        FileCopy(VARIABLES.setupDir & "/" & VARIABLES.languagesFilename, VARIABLES.configDir);
-      if(not FileExists(VARIABLES.labelsFile))
-        FileCopy(VARIABLES.setupDir & "/" & VARIABLES.labelsFilename, VARIABLES.configDir);
-      if(not FileExists(VARIABLES.securityFile))
-        FileCopy(VARIABLES.setupDir & "/" & VARIABLES.securityFilename, VARIABLES.configDir);
+      if(not FileExists(variables.settingsFile))
+        FileCopy(variables.setupDir & "/" & variables.settingsFilename, variables.configDir)
+      if(not FileExists(variables.languagesFile))
+        FileCopy(variables.setupDir & "/" & variables.languagesFilename, variables.configDir)
+      if(not FileExists(variables.labelsFile))
+        FileCopy(variables.setupDir & "/" & variables.labelsFilename, variables.configDir)
+      if(not FileExists(variables.rolesFile))
+        FileCopy(variables.setupDir & "/" & variables.rolesFilename, variables.configDir)
+      if(not FileExists(variables.securityFile))
+        FileCopy(variables.setupDir & "/" & variables.securityFilename, variables.configDir)
     }catch(any e){
       throw("Cannot copy setup files");
     }
@@ -63,10 +70,13 @@ component extends="vendor.fw1.framework.one" {
     //APPLICATION.securityService = getBeanFactory().getBean("SecurityService")
 
     // loading application parameters which will be used by other services, for example LanguageService
-    var configService = getBeanFactory().getBean("ConfigService", { settingsFile = VARIABLES.settingsFile })
+    var configService = getBeanFactory().getBean("ConfigService", { settingsFile = variables.settingsFile })
 
     // loading available languages and labels for display
-    var languageService = getBeanFactory().getBean("LanguageService", { languagesFile = VARIABLES.languagesFile, labelsFile = VARIABLES.labelsFile } )
+    var languageService = getBeanFactory().getBean("LanguageService", { languagesFile = variables.languagesFile, labelsFile = variables.labelsFile } )
+
+    // loading security tokens
+    var securityService = getBeanFactory().getBean("SecurityService", { rolesFile = variables.rolesFile, securityFile = variables.securityFile })
 
     REQUEST.momentStart = GetTickCount()
   }
@@ -74,9 +84,6 @@ component extends="vendor.fw1.framework.one" {
   public void function setupRequest(){
 
     // ORMRELOAD();
-
-    var sec = DeserializeJSON(FileRead(VARIABLES.securityFile));
-    writedump(sec);abort;
 
     var configService = getBeanFactory().getBean("ConfigService")
     var languageService = getBeanFactory().getBean("LanguageService")
@@ -88,7 +95,8 @@ component extends="vendor.fw1.framework.one" {
 
     param name="REQUEST.momentStart" default="#GetTickCount()#";
 
-    //var securityService = getBeanFactory().getBean("SecurityService")
+    var securityService = getBeanFactory().getBean("SecurityService")
+    writedump(securityService.getRole("user"))
 
     //REQUEST.user = securityService.getUser()
 

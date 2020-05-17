@@ -1,0 +1,12 @@
+[
+  {
+    "code": "user",
+    "pluralname": "Users",
+    "singularname": "User"
+  },
+  {
+    "code": "admin",
+    "pluralname": "Administrators",
+    "singularname": "Administrator"
+  }
+]

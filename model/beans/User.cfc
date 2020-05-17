@@ -18,7 +18,6 @@ component persistent="true" entityname="User" table="users" accessors="true" {
              cfc="Setting"
              fkcolumn="id_user"
              type="array";
-*/
     property name="roles"
              singularname="role"
              fieldtype="many-to-many"
@@ -27,6 +26,7 @@ component persistent="true" entityname="User" table="users" accessors="true" {
              fkcolumn="id_user"
              inversejoincolumn="id_role"
              type="array";
+*/
 
     public any function init(){
         VARIABLES.setID(0);
