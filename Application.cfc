@@ -66,17 +66,22 @@ component extends="framework.one" {
 	*/
 
 	this.name = "clone_" & Hash(getDirectoryFromPath(getCurrentTemplatePath()));
+	this.sessionManagement = true;
+	this.loginStorage = "session";
 
 	variables.rootDirectory = getDirectoryFromPath(getCurrentTemplatePath());
 	variables.configFolder = "config";
 
 	variables.framework = {
-		reloadApplicationOnEveryRequest = true
+		reloadApplicationOnEveryRequest = true,
+		diEngine = 'aop1',
+		diConfig = { interceptors = [ {beanName = "mainController", interceptorName = "securityInterceptor"}] }
 	}
 
 	function setupApplication() {
-		APPLICATION.rootDirectory = variables.rootDirectory;
-		APPLICATION.configDirectory = variables.rootDirectory & variables.configFolder;
+		application.rootDirectory = variables.rootDirectory;
+		application.configDirectory = variables.rootDirectory & variables.configFolder;
+		
 		controller("config.checkConfigFolder");
 	}
 
